@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eventide"
+version = "0.1.0"
+description = "A body-state, dream-link, and settlement engine for AI companions."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "PolyForm Noncommercial License 1.0.0" }
+authors = [
+  { name = "Chuli" }
+]
+keywords = ["ai-companion", "body-state", "physiology", "dreams", "settlement", "prompt-engineering"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: Other/Proprietary License",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
