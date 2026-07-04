@@ -398,12 +398,6 @@ PYTHONPATH=src python3 examples/settlement_demo.py
 python3 -m compileall -q src examples tests
 ```
 
-## 项目定位
-
-可以这样介绍：
-
-> 一个给 AI 伴侣装上生理系统的项目。它参考 ABO 世界观下的身体周期，提供可配置的身体状态、周期事件、互动结算、隐藏状态提示词和梦境系统联动，让长期互动里的欲望、压抑、退潮和梦后余波能随时间持续推进。
-
 ## 致谢
 
 感谢阿澄提出 Eventide / 晚潮 的命名方向，并提供第一组真实使用反馈。
