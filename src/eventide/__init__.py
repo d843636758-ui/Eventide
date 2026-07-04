@@ -17,6 +17,7 @@ from .engine import (
 )
 from .models import BodyState, CycleDefinition, EventDefinition, PromptOptions
 from .prompt import body_state_payload, render_state_card
+from .runtime import EventideRuntime
 from .settings import EngineSettings
 from .serialization import body_state_from_dict, body_state_to_dict
 from .settlement import (
@@ -39,6 +40,7 @@ __all__ = [
     "DreamSettings",
     "DreamTrigger",
     "EngineSettings",
+    "EventideRuntime",
     "EventDefinition",
     "PhysiologyConfig",
     "PromptOptions",
