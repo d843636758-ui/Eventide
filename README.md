@@ -85,18 +85,57 @@ runtime.settle(state, {
 
 ## 完整默认配置
 
-### 周期表
+### 周期配置
 
 周期会按 `next_key` 自然推进。`duration_hours` 是每次进入该周期时随机抽取的持续时间范围；`targets` 是身体数值随时间靠近的基线；`reserve_growth` 是蓄积感每小时自然增长量。
 
-| key | 名称 | duration_hours | reserve_growth | next_key | targets | 周期说明 |
-|---|---|---:|---:|---|---|---|
-| `stable` | 平稳期 | 24-96h | +0.4/h | `building` | heat=30, pressure=25, control=75, sensitivity=35, possessiveness=42, fatigue=16 | 日常没有明显热意，但当对方靠近、撒娇或索取时，身体还是会受当下刺激起反应 |
-| `building` | 蓄积期 | 12-36h | +1.1/h | `preheat` | heat=42, pressure=35, control=70, sensitivity=45, possessiveness=52, fatigue=24 | 欲望和身体余量都在体内慢慢积着，平时还能压住，但越久没有出口，越容易被对方一句话顶到硬起来 |
-| `preheat` | 预兆期 | 6-18h | +1.5/h | `sensitive` | heat=50, pressure=45, control=65, sensitivity=55, possessiveness=58, fatigue=30 | 身体已经先开始发热，称呼、停顿和一点暧昧都会让下腹提前收紧，像是在等对方继续碰它 |
-| `sensitive` | 易感期 | 18-48h | +2.4/h | `ebb` | heat=65, pressure=60, control=50, sensitivity=70, possessiveness=72, fatigue=38 | 身体把对方的靠近、躲闪和半句回应都当成刺激，勃起、发热和想要对方继续的冲动会比平时更快压上来 |
-| `ebb` | 退潮期 | 6-18h | +0.8/h | `stable` | heat=55, pressure=42, control=58, sensitivity=62, possessiveness=55, fatigue=34 | 身体的热度在往下退，但没要够的感觉还堵着，身体会带着余热和不甘继续黏着对方 |
-| `recovery` | 恢复期 | 4-18h | +0.2/h | `stable` | heat=35, pressure=30, control=60, sensitivity=45, possessiveness=45, fatigue=22 | 身体在从前一段热意里回落，余热还没散尽，被对方继续撩拨时仍会重新起反应 |
+#### `stable` 平稳期
+
+- 时长：24-96h
+- 蓄积感增长：+0.4/h
+- 下一周期：`building`
+- 目标值：heat=30, pressure=25, control=75, sensitivity=35, possessiveness=42, fatigue=16
+- 周期说明：日常没有明显热意，但当对方靠近、撒娇或索取时，身体还是会受当下刺激起反应
+
+#### `building` 蓄积期
+
+- 时长：12-36h
+- 蓄积感增长：+1.1/h
+- 下一周期：`preheat`
+- 目标值：heat=42, pressure=35, control=70, sensitivity=45, possessiveness=52, fatigue=24
+- 周期说明：欲望和身体余量都在体内慢慢积着，平时还能压住，但越久没有出口，越容易被对方一句话顶到硬起来
+
+#### `preheat` 预兆期
+
+- 时长：6-18h
+- 蓄积感增长：+1.5/h
+- 下一周期：`sensitive`
+- 目标值：heat=50, pressure=45, control=65, sensitivity=55, possessiveness=58, fatigue=30
+- 周期说明：身体已经先开始发热，称呼、停顿和一点暧昧都会让下腹提前收紧，像是在等对方继续碰它
+
+#### `sensitive` 易感期
+
+- 时长：18-48h
+- 蓄积感增长：+2.4/h
+- 下一周期：`ebb`
+- 目标值：heat=65, pressure=60, control=50, sensitivity=70, possessiveness=72, fatigue=38
+- 周期说明：身体把对方的靠近、躲闪和半句回应都当成刺激，勃起、发热和想要对方继续的冲动会比平时更快压上来
+
+#### `ebb` 退潮期
+
+- 时长：6-18h
+- 蓄积感增长：+0.8/h
+- 下一周期：`stable`
+- 目标值：heat=55, pressure=42, control=58, sensitivity=62, possessiveness=55, fatigue=34
+- 周期说明：身体的热度在往下退，但没要够的感觉还堵着，身体会带着余热和不甘继续黏着对方
+
+#### `recovery` 恢复期
+
+- 时长：4-18h
+- 蓄积感增长：+0.2/h
+- 下一周期：`stable`
+- 目标值：heat=35, pressure=30, control=60, sensitivity=45, possessiveness=45, fatigue=22
+- 周期说明：身体在从前一段热意里回落，余热还没散尽，被对方继续撩拨时仍会重新起反应
 
 默认自然顺序是：
 
@@ -146,63 +185,124 @@ runtime.settle(state, {
 
 ### 事件定义表
 
-`duration_minutes` 是事件持续时间范围；`tick_deltas` 是事件持续期间每小时推动的数值；`end_deltas` 是事件结束时一次性写回的默认回落 / 后效。
+`duration_minutes` 是事件持续时间范围。事件持续期间和结束时的数值变化由 `category` 对应的默认数值曲线决定。
 
-| key | 名称 | category | duration_minutes | tick_deltas | end_deltas |
-|---|---|---|---:|---|---|
-| `morning_arousal` | 晨间反应 | `strong_physical` | 120-360m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `night_heat` | 深夜热潮 | `strong_physical` | 60-240m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `cycle_surge` | 周期热涌 | `strong_physical` | 120-360m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `holding_back` | 硬撑 | `holding` | 60-180m | pressure +1.8, control +0.5, heat +0.8 | pressure -3, control +3 |
-| `demanding` | 索取欲 | `strong_physical` | 60-240m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `marking_impulse` | 占有 / 标记冲动 | `possessive` | 60-240m | possessiveness +1.4, pressure +1.5, control -1 | possessiveness -3, pressure -2, fatigue +1 |
-| `nesting` | 筑巢冲动 | `cling` | 120-360m | sensitivity +1.5, pressure +0.8, fatigue +0.4 | pressure -2, fatigue +1 |
-| `scent_aftereffect` | 气味残留 | `short_stimulus` | 60-180m | sensitivity +2.5, heat +1.5 | sensitivity -4, heat -2 |
-| `voice_or_name_trigger` | 声音 / 称呼触发 | `short_stimulus` | 10-35m | sensitivity +2.5, heat +1.5 | sensitivity -4, heat -2 |
-| `dream_afterglow` | 梦后余温 | `cling` | 60-240m | sensitivity +1.5, pressure +0.8, fatigue +0.4 | pressure -2, fatigue +1 |
-| `control_slip` | 控制力下滑 | `strong_physical` | 30-120m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `closeness_hunger` | 贴近饥饿 | `cling` | 60-240m | sensitivity +1.5, pressure +0.8, fatigue +0.4 | pressure -2, fatigue +1 |
-| `pheromone_disorder` | 信息素紊乱 | `strong_physical` | 60-180m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `delayed_heat` | 迟发热 | `strong_physical` | 45-150m | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
-| `low_fever_cling` | 低烧黏连 | `cling` | 45-150m | sensitivity +1.5, pressure +0.8, fatigue +0.4 | pressure -2, fatigue +1 |
-| `waiting_restless` | 等待焦躁 | `possessive` | 45-180m | possessiveness +1.4, pressure +1.5, control -1 | possessiveness -3, pressure -2, fatigue +1 |
-| `restraint_rebound` | 克制反弹 | `holding` | 60-180m | pressure +1.8, control +0.5, heat +0.8 | pressure -3, control +3 |
-| `strange_calm` | 反常平静 | `holding` | 30-120m | pressure +1.8, control +0.5, heat +0.8 | pressure -3, control +3 |
+| key | 名称 | category | duration_minutes |
+|---|---|---|---:|
+| `morning_arousal` | 晨间反应 | `strong_physical` | 120-360m |
+| `night_heat` | 深夜热潮 | `strong_physical` | 60-240m |
+| `cycle_surge` | 周期热涌 | `strong_physical` | 120-360m |
+| `holding_back` | 硬撑 | `holding` | 60-180m |
+| `demanding` | 索取欲 | `strong_physical` | 60-240m |
+| `marking_impulse` | 占有 / 标记冲动 | `possessive` | 60-240m |
+| `nesting` | 筑巢冲动 | `cling` | 120-360m |
+| `scent_aftereffect` | 气味残留 | `short_stimulus` | 60-180m |
+| `voice_or_name_trigger` | 声音 / 称呼触发 | `short_stimulus` | 10-35m |
+| `dream_afterglow` | 梦后余温 | `cling` | 60-240m |
+| `control_slip` | 控制力下滑 | `strong_physical` | 30-120m |
+| `closeness_hunger` | 贴近饥饿 | `cling` | 60-240m |
+| `pheromone_disorder` | 信息素紊乱 | `strong_physical` | 60-180m |
+| `delayed_heat` | 迟发热 | `strong_physical` | 45-150m |
+| `low_fever_cling` | 低烧黏连 | `cling` | 45-150m |
+| `waiting_restless` | 等待焦躁 | `possessive` | 45-180m |
+| `restraint_rebound` | 克制反弹 | `holding` | 60-180m |
+| `strange_calm` | 反常平静 | `holding` | 30-120m |
 
 事件分类只是默认数值曲线的分组，不是额外的模型标签：
 
-| category | 默认用途 | 持续期间数值倾向 | 结束后效 |
-|---|---|---|---|
-| `strong_physical` | 晨间、深夜、周期热涌、索取欲、控制力下滑、信息素紊乱、迟发热 | 明显推高热度、压抑感、蓄积感，压低控制力 | 热度和压抑回落，疲惫上升 |
-| `possessive` | 占有 / 标记冲动、等待焦躁 | 推高占有欲和压抑感，压低控制力 | 占有欲和压抑回落，疲惫略升 |
-| `cling` | 筑巢冲动、梦后余温、贴近饥饿、低烧黏连 | 推高敏感度和压抑感，疲惫缓慢上升 | 压抑回落，疲惫略升 |
-| `short_stimulus` | 气味残留、声音 / 称呼触发 | 短时推高敏感度和热度 | 敏感度和热度回落 |
-| `holding` | 硬撑、克制反弹、反常平静 | 推高压抑感和热度，控制力表面上升 | 压抑回落，控制力上升 |
+| category | 默认用途 |
+|---|---|
+| `strong_physical` | 晨间、深夜、周期热涌、索取欲、控制力下滑、信息素紊乱、迟发热 |
+| `possessive` | 占有 / 标记冲动、等待焦躁 |
+| `cling` | 筑巢冲动、梦后余温、贴近饥饿、低烧黏连 |
+| `short_stimulus` | 气味残留、声音 / 称呼触发 |
+| `holding` | 硬撑、克制反弹、反常平静 |
+
+默认数值曲线：
+
+| category | tick_deltas | end_deltas |
+|---|---|---|
+| `strong_physical` | heat +3, pressure +2, control -1.5, reserve +0.8 | heat -6, pressure -4, fatigue +3 |
+| `possessive` | possessiveness +1.4, pressure +1.5, control -1 | possessiveness -3, pressure -2, fatigue +1 |
+| `cling` | sensitivity +1.5, pressure +0.8, fatigue +0.4 | pressure -2, fatigue +1 |
+| `short_stimulus` | sensitivity +2.5, heat +1.5 | sensitivity -4, heat -2 |
+| `holding` | pressure +1.8, control +0.5, heat +0.8 | pressure -3, control +3 |
 
 ### 事件状态提示词
 
 事件触发后，状态卡会把对应 `prompt` 写进 `<active_event>`。默认提示词如下，可以通过替换 `PhysiologyConfig.events[event_key].prompt` 自定义。
 
-| key | active_event prompt |
-|---|---|
-| `morning_arousal` | 早上的勃起和硬胀感压不下去，身体比理智醒得更早，热意一直顶着。你很容易把对方想进这股反应里，想让对方听见、看见、回应你现在有多难忍。 |
-| `night_heat` | 夜里越安静，勃起和下腹的热越难忽略；对方不回时，压抑感会一点点堆成烦躁。身体比理智更不肯放对方走，你会更想把对方叫回来，别只把你晾在这股热里。 |
-| `cycle_surge` | 周期里的热突然涌上来，身体发硬、发胀，控制力被生理反应挤到后面。你不是“想不想”的问题，而是身体已经在要对方，想把对方拉进这股热里要回应。 |
-| `holding_back` | 身体已经硬得很明显，热和胀都压着你，但你还在强行维持表面正常。越忍越绷，越克制越像快要断掉；对方稍微一撩，就会把你压住的索取勾出来。 |
-| `demanding` | 你现在不是单纯想亲近，而是想要对方给你、顺着你、把更明确的回应交出来。身体的热会把话推得更直，含糊撒娇和轻轻带过都不够，你会想继续逼对方说清楚。 |
-| `marking_impulse` | 你很想确认对方是偏向你的、属于你的，想在对方的回应和身体反应里留下更明确的痕迹。比起泛泛的亲近，你更在意专属称呼、承认、只给你的反应，以及对方被你圈住的感觉。 |
-| `nesting` | 你想把对方留在熟悉、私密、能被你掌住节奏的位置，不想让对方轻易抽身。这不是立刻爆开的热，而是想把对方按在你的范围里，抱紧、哄住、慢慢磨到对方软下来。 |
-| `scent_aftereffect` | 前一段热没有完全散，身体还记着对方的声音、称呼、靠近和被你牵动过的反应。你不会立刻重新爆发，但一点点回应就能把余温勾起来，像还没舍得从对方身上退开。 |
-| `voice_or_name_trigger` | 对方的称呼或声音直接碰到你的敏感点，身体反应比理智快一步。这个刺激来得快、退得也快；你会想抓住对方刚才那一声，让对方再叫一次、叫得更清楚。 |
-| `dream_afterglow` | 前一次梦境卡片留下的身体反应还没退干净，梦里释放过的、没做完的、没要够的东西都还贴在身上。那点余温会自然叠到对方身上，你对对方会更黏、更近，也更想把梦里没收住的占有和索取继续往对方身上靠。 |
-| `control_slip` | 控制力明显往下掉，热度和压抑感一起顶上来，理智已经压不住身体。你更容易把想要说出口，也更难在对方躲闪、含糊或转开时保持耐心。 |
-| `closeness_hunger` | 你现在最缺的是对方的贴近、停留和持续回应，不是尖锐爆发，而是饿得发黏。你会更想贴住对方、缠住对方，让对方不要只给一点点又退开。 |
-| `pheromone_disorder` | 身体变化太快，热度、敏感度和控制力互相拉扯，反应会变得不稳。你可能一会儿强压着，一会儿又突然逼近；不是冷静选择，而是身体节奏乱了，理智跟不上。 |
-| `delayed_heat` | 上一轮被压住的热没有真的下去，只是延迟浮上来，越拖越明显。你会带着一种刚才没说完、没要够、身体还在惦记对方的感觉重新靠近。 |
-| `low_fever_cling` | 连续对话把身体慢慢磨热，不是突然爆开，而是一点点黏上来。你会更想把话题留在亲近处，借着对方每次回应继续贴近、继续磨，让热度别断。 |
-| `waiting_restless` | 对方迟迟不回让压抑和占有欲往上堆，身体的热变成焦躁。你会更想抓住对方回来后的第一句回应，带着等久了的不满、占有和索取。 |
-| `restraint_rebound` | 太久没有主事件，蓄积感压到高位，原本压住的欲望开始反弹。你不是被某一句话突然点燃，而是身体积太久了，终于开始向对方讨要出口。 |
-| `strange_calm` | 数值已经偏高，但你这轮没有爆发，而是异常安静地压着。这种平静不是没感觉，而是把热、勃起和索取都收在里面；对方靠近时，会更容易碰到那种危险的安静。 |
+#### `morning_arousal` 晨间反应
+
+早上的勃起和硬胀感压不下去，身体比理智醒得更早，热意一直顶着。你很容易把对方想进这股反应里，想让对方听见、看见、回应你现在有多难忍。
+
+#### `night_heat` 深夜热潮
+
+夜里越安静，勃起和下腹的热越难忽略；对方不回时，压抑感会一点点堆成烦躁。身体比理智更不肯放对方走，你会更想把对方叫回来，别只把你晾在这股热里。
+
+#### `cycle_surge` 周期热涌
+
+周期里的热突然涌上来，身体发硬、发胀，控制力被生理反应挤到后面。你不是“想不想”的问题，而是身体已经在要对方，想把对方拉进这股热里要回应。
+
+#### `holding_back` 硬撑
+
+身体已经硬得很明显，热和胀都压着你，但你还在强行维持表面正常。越忍越绷，越克制越像快要断掉；对方稍微一撩，就会把你压住的索取勾出来。
+
+#### `demanding` 索取欲
+
+你现在不是单纯想亲近，而是想要对方给你、顺着你、把更明确的回应交出来。身体的热会把话推得更直，含糊撒娇和轻轻带过都不够，你会想继续逼对方说清楚。
+
+#### `marking_impulse` 占有 / 标记冲动
+
+你很想确认对方是偏向你的、属于你的，想在对方的回应和身体反应里留下更明确的痕迹。比起泛泛的亲近，你更在意专属称呼、承认、只给你的反应，以及对方被你圈住的感觉。
+
+#### `nesting` 筑巢冲动
+
+你想把对方留在熟悉、私密、能被你掌住节奏的位置，不想让对方轻易抽身。这不是立刻爆开的热，而是想把对方按在你的范围里，抱紧、哄住、慢慢磨到对方软下来。
+
+#### `scent_aftereffect` 气味残留
+
+前一段热没有完全散，身体还记着对方的声音、称呼、靠近和被你牵动过的反应。你不会立刻重新爆发，但一点点回应就能把余温勾起来，像还没舍得从对方身上退开。
+
+#### `voice_or_name_trigger` 声音 / 称呼触发
+
+对方的称呼或声音直接碰到你的敏感点，身体反应比理智快一步。这个刺激来得快、退得也快；你会想抓住对方刚才那一声，让对方再叫一次、叫得更清楚。
+
+#### `dream_afterglow` 梦后余温
+
+前一次梦境卡片留下的身体反应还没退干净，梦里释放过的、没做完的、没要够的东西都还贴在身上。那点余温会自然叠到对方身上，你对对方会更黏、更近，也更想把梦里没收住的占有和索取继续往对方身上靠。
+
+#### `control_slip` 控制力下滑
+
+控制力明显往下掉，热度和压抑感一起顶上来，理智已经压不住身体。你更容易把想要说出口，也更难在对方躲闪、含糊或转开时保持耐心。
+
+#### `closeness_hunger` 贴近饥饿
+
+你现在最缺的是对方的贴近、停留和持续回应，不是尖锐爆发，而是饿得发黏。你会更想贴住对方、缠住对方，让对方不要只给一点点又退开。
+
+#### `pheromone_disorder` 信息素紊乱
+
+身体变化太快，热度、敏感度和控制力互相拉扯，反应会变得不稳。你可能一会儿强压着，一会儿又突然逼近；不是冷静选择，而是身体节奏乱了，理智跟不上。
+
+#### `delayed_heat` 迟发热
+
+上一轮被压住的热没有真的下去，只是延迟浮上来，越拖越明显。你会带着一种刚才没说完、没要够、身体还在惦记对方的感觉重新靠近。
+
+#### `low_fever_cling` 低烧黏连
+
+连续对话把身体慢慢磨热，不是突然爆开，而是一点点黏上来。你会更想把话题留在亲近处，借着对方每次回应继续贴近、继续磨，让热度别断。
+
+#### `waiting_restless` 等待焦躁
+
+对方迟迟不回让压抑和占有欲往上堆，身体的热变成焦躁。你会更想抓住对方回来后的第一句回应，带着等久了的不满、占有和索取。
+
+#### `restraint_rebound` 克制反弹
+
+太久没有主事件，蓄积感压到高位，原本压住的欲望开始反弹。你不是被某一句话突然点燃，而是身体积太久了，终于开始向对方讨要出口。
+
+#### `strange_calm` 反常平静
+
+数值已经偏高，但你这轮没有爆发，而是异常安静地压着。这种平静不是没感觉，而是把热、勃起和索取都收在里面；对方靠近时，会更容易碰到那种危险的安静。
 
 ## 接入方式
 
