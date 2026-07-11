@@ -1,6 +1,12 @@
 import os
-from datetime import datetime, timezone
+import random
+from datetime import (
+    datetime,
+    timedelta,
+    timezone,
+)
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import (
@@ -27,6 +33,11 @@ PUBLIC_HOST = os.getenv(
 ).strip()
 
 
+LOCAL_TIMEZONE = ZoneInfo(
+    "Asia/Shanghai"
+)
+
+
 transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
@@ -51,7 +62,9 @@ mcp = FastMCP(
         "记忆状态来自 Ombre Brain。"
         "读取完整状态时，"
         "Eventide 会先根据已经过去的时间"
-        "自动推进身体状态。"
+        "自动推进身体状态，"
+        "并根据当前周期、时间和身体数值"
+        "尝试触发短时身体事件。"
     ),
     stateless_http=True,
     json_response=True,
@@ -89,6 +102,235 @@ def normalize_datetime(
     )
 
 
+def read_meta_datetime(
+    value: Optional[str],
+) -> Optional[datetime]:
+    if not value:
+        return None
+
+    try:
+        parsed = datetime.fromisoformat(
+            value.replace(
+                "Z",
+                "+00:00",
+            )
+        )
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(
+                tzinfo=timezone.utc
+            )
+
+        return parsed.astimezone(
+            timezone.utc
+        )
+
+    except Exception:
+        return None
+
+
+def maybe_start_auto_event(
+    state,
+    now: datetime,
+) -> Optional[str]:
+    if (
+        state.active_event_key
+        and state.active_event_expires_at
+        and now < state.active_event_expires_at
+    ):
+        return None
+
+    last_check = read_meta_datetime(
+        state.meta.get(
+            "last_auto_event_check_at"
+        )
+    )
+
+    if (
+        last_check
+        and now - last_check
+        < timedelta(minutes=30)
+    ):
+        return None
+
+    state.meta[
+        "last_auto_event_check_at"
+    ] = now.isoformat()
+
+    last_event = read_meta_datetime(
+        state.meta.get(
+            "last_auto_event_at"
+        )
+    )
+
+    if (
+        last_event
+        and now - last_event
+        < timedelta(hours=3)
+    ):
+        return None
+
+    values = state.values
+
+    heat = values.get(
+        "heat",
+        0,
+    )
+
+    pressure = values.get(
+        "pressure",
+        0,
+    )
+
+    control = values.get(
+        "control",
+        0,
+    )
+
+    sensitivity = values.get(
+        "sensitivity",
+        0,
+    )
+
+    reserve = values.get(
+        "reserve",
+        0,
+    )
+
+    possessiveness = values.get(
+        "possessiveness",
+        40,
+    )
+
+    local_hour = now.astimezone(
+        LOCAL_TIMEZONE
+    ).hour
+
+    candidates = []
+
+    if (
+        6 <= local_hour < 10
+        and heat >= 25
+    ):
+        candidates.append(
+            (
+                "morning_arousal",
+                0.22,
+            )
+        )
+
+    if (
+        local_hour >= 22
+        or local_hour < 2
+    ):
+        if heat >= 35:
+            candidates.append(
+                (
+                    "night_heat",
+                    0.24,
+                )
+            )
+
+    if (
+        state.cycle_key
+        in {
+            "preheat",
+            "sensitive",
+        }
+        and reserve >= 50
+    ):
+        candidates.append(
+            (
+                "cycle_surge",
+                0.28,
+            )
+        )
+
+    if (
+        heat >= 60
+        and control <= 45
+    ):
+        candidates.append(
+            (
+                "control_slip",
+                0.32,
+            )
+        )
+
+    if (
+        possessiveness >= 70
+        and pressure >= 55
+    ):
+        candidates.append(
+            (
+                "marking_impulse",
+                0.22,
+            )
+        )
+
+    if (
+        sensitivity >= 65
+        and pressure >= 45
+    ):
+        candidates.append(
+            (
+                "closeness_hunger",
+                0.22,
+            )
+        )
+
+    if (
+        pressure >= 65
+        and control >= 55
+    ):
+        candidates.append(
+            (
+                "holding_back",
+                0.20,
+            )
+        )
+
+    if (
+        reserve >= 75
+        and control >= 55
+    ):
+        candidates.append(
+            (
+                "restraint_rebound",
+                0.18,
+            )
+        )
+
+    if not candidates:
+        return None
+
+    candidates.sort(
+        key=lambda item: item[1],
+        reverse=True,
+    )
+
+    for event_key, probability in candidates:
+        if random.random() <= probability:
+            started = runtime.start_event(
+                state,
+                event_key,
+                now,
+            )
+
+            if started:
+                state.meta[
+                    "last_auto_event_at"
+                ] = now.isoformat()
+
+                state.meta[
+                    "last_auto_event_key"
+                ] = event_key
+
+                return event_key
+
+    return None
+
+
 @mcp.tool()
 def get_full_state() -> dict:
     """
@@ -96,6 +338,10 @@ def get_full_state() -> dict:
 
     读取前会先根据已经过去的时间，
     自动推进并保存 Eventide 身体状态。
+
+    如果当前没有活动事件，
+    还会根据时间、周期和身体数值
+    尝试触发一个短时身体事件。
 
     返回身体状态、身体状态卡、
     当前情绪、关系状态、
@@ -116,6 +362,13 @@ def get_full_state() -> dict:
         now,
     )
 
+    auto_event = (
+        maybe_start_auto_event(
+            state,
+            now,
+        )
+    )
+
     saved_state = save_state(
         runtime.dump_state(
             state
@@ -124,6 +377,8 @@ def get_full_state() -> dict:
 
     eventide_data = {
         "changed": changed,
+        "auto_event_started":
+            auto_event,
         "state": saved_state,
         "body": runtime.payload(
             state
@@ -185,6 +440,13 @@ def tick_body(
         ),
     )
 
+    auto_event = (
+        maybe_start_auto_event(
+            state,
+            now,
+        )
+    )
+
     saved_state = save_state(
         runtime.dump_state(
             state
@@ -194,6 +456,8 @@ def tick_body(
     return {
         "ok": True,
         "changed": changed,
+        "auto_event_started":
+            auto_event,
         "state": saved_state,
         "body": runtime.payload(
             state
