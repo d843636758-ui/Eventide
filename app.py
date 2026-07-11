@@ -9,13 +9,14 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from eventide import EventideRuntime
+from integrations import get_emotion_dashboard
 from storage import get_state_file_path, load_state, save_state
 
 
 app = FastAPI(
     title="Eventide Service",
-    version="0.2.0",
-    description="Eventide 身体状态服务",
+    version="0.3.0",
+    description="Eventide 身体状态与统一状态面板服务",
 )
 
 runtime = EventideRuntime()
@@ -81,6 +82,7 @@ def root() -> dict:
         "service": "eventide",
         "message": "Eventide service is running",
         "dashboard": "/dashboard",
+        "docs": "/docs",
     }
 
 
@@ -106,6 +108,7 @@ def health() -> dict:
         "service": "eventide",
         "state_file": get_state_file_path(),
         "dashboard_exists": DASHBOARD_FILE.exists(),
+        "emotion_integration": True,
         "time": utc_now().isoformat(),
     }
 
@@ -120,6 +123,7 @@ def get_state(
 
     try:
         state_data = load_state()
+
         state = runtime.load_state(
             state_data
         )
@@ -143,6 +147,24 @@ def get_state(
         raise HTTPException(
             status_code=500,
             detail=f"读取状态失败: {error}",
+        ) from error
+
+
+@app.get("/emotion")
+def get_emotion(
+    authorized: bool = Depends(
+        require_api_key
+    ),
+) -> dict:
+    del authorized
+
+    try:
+        return get_emotion_dashboard()
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"读取情绪状态失败: {error}",
         ) from error
 
 
