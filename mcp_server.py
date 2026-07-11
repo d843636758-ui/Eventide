@@ -1,7 +1,11 @@
+import os
 from datetime import datetime, timezone
 from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import (
+    TransportSecuritySettings,
+)
 
 from eventide import EventideRuntime
 from integrations import (
@@ -17,6 +21,27 @@ from storage import (
 runtime = EventideRuntime()
 
 
+PUBLIC_HOST = os.getenv(
+    "EVENTIDE_PUBLIC_HOST",
+    "eventidemcp.zeabur.app",
+).strip()
+
+
+transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        PUBLIC_HOST,
+        f"{PUBLIC_HOST}:*",
+    ],
+    allowed_origins=[
+        "https://chatgpt.com",
+        "https://www.chatgpt.com",
+        "https://chat.openai.com",
+        f"https://{PUBLIC_HOST}",
+    ],
+)
+
+
 mcp = FastMCP(
     name="Eventide",
     instructions=(
@@ -28,6 +53,7 @@ mcp = FastMCP(
     stateless_http=True,
     json_response=True,
     streamable_http_path="/",
+    transport_security=transport_security,
 )
 
 
