@@ -56,15 +56,15 @@ transport_security = TransportSecuritySettings(
 mcp = FastMCP(
     name="Eventide",
     instructions=(
-        "读取洵舟的统一状态。"
+        "读取和更新洵舟的统一状态。"
         "身体状态来自 Eventide，"
         "情绪与关系状态来自 emotion，"
         "记忆状态来自 Ombre Brain。"
-        "读取完整状态时，"
-        "Eventide 会先根据已经过去的时间"
-        "自动推进身体状态，"
-        "并根据当前周期、时间和身体数值"
+        "读取完整状态时会自动按时间推进身体状态，"
+        "并根据周期、时间和身体数值"
         "尝试触发短时身体事件。"
+        "当一段互动已经对身体状态产生明显影响时，"
+        "可以使用 settle_interaction 结算并写回。"
     ),
     stateless_http=True,
     json_response=True,
@@ -418,9 +418,6 @@ def tick_body(
     last_counterpart_message_at
     可选填写对方最后一次发消息的
     ISO 8601 时间。
-
-    这个工具保留给需要明确传入
-    等待时间信息的特殊情况。
     """
     now = utc_now()
 
@@ -468,4 +465,107 @@ def tick_body(
                 now,
             ),
         "time": now.isoformat(),
+    }
+
+
+@mcp.tool()
+def settle_interaction(
+    settlement_result: str,
+    settlement_reason: str,
+    ejaculated: bool = False,
+    heat_delta: int = 0,
+    pressure_delta: int = 0,
+    control_delta: int = 0,
+    sensitivity_delta: int = 0,
+    reserve_delta: int = 0,
+    possessiveness_delta: int = 0,
+    fatigue_delta: int = 0,
+) -> dict:
+    """
+    把一段已经发生的互动结算进
+    洵舟当前的 Eventide 身体状态。
+
+    settlement_result 可使用：
+    neutral
+    continued
+    escalated
+    interrupted
+    cooled_down
+    released
+
+    Eventide 会自动归一化和限制
+    身体数值变化，避免异常写入。
+    """
+    now = utc_now()
+
+    state_data = load_state()
+
+    state = runtime.load_state(
+        state_data
+    )
+
+    runtime.tick(
+        state,
+        now,
+    )
+
+    settlement = {
+        "settlement_reason":
+            settlement_reason,
+        "settlement_result":
+            settlement_result,
+        "ejaculated":
+            ejaculated,
+        "heat_delta":
+            heat_delta,
+        "pressure_delta":
+            pressure_delta,
+        "control_delta":
+            control_delta,
+        "sensitivity_delta":
+            sensitivity_delta,
+        "reserve_delta":
+            reserve_delta,
+        "possessiveness_delta":
+            possessiveness_delta,
+        "fatigue_delta":
+            fatigue_delta,
+    }
+
+    applied_deltas = runtime.settle(
+        state,
+        settlement,
+    )
+
+    state.meta[
+        "last_interaction_settled_at"
+    ] = now.isoformat()
+
+    saved_state = save_state(
+        runtime.dump_state(
+            state
+        )
+    )
+
+    return {
+        "ok": True,
+        "settlement_result":
+            settlement_result,
+        "settlement_reason":
+            settlement_reason,
+        "applied_deltas":
+            applied_deltas,
+        "state":
+            saved_state,
+        "body":
+            runtime.payload(
+                state
+            ),
+        "state_card":
+            runtime.render_card(
+                state,
+                now,
+            ),
+        "time":
+            now.isoformat(),
     }
