@@ -17,12 +17,15 @@
 
   <style>
     :root {
-      --bg-top: #f9f6ff;
+      --bg-top: #faf7ff;
       --bg-bottom: #f1edff;
       --card: rgba(255, 255, 255, 0.76);
       --text: #40394c;
       --muted: #91899d;
-      --purple: #b99aef;
+      --purple: #aa8ce6;
+      --pink: #e7a4c7;
+      --blue: #8ea8dc;
+      --green: #9bcdb9;
       --shadow: 0 18px 50px rgba(111, 89, 145, 0.12);
     }
 
@@ -35,6 +38,23 @@
     body {
       margin: 0;
       min-height: 100%;
+    }
+
+    body {
+      padding:
+        max(22px, env(safe-area-inset-top))
+        16px
+        max(32px, env(safe-area-inset-bottom));
+
+      color: var(--text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
       background:
         radial-gradient(
           circle at 20% 10%,
@@ -51,20 +71,6 @@
           var(--bg-top),
           var(--bg-bottom)
         );
-      color: var(--text);
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "PingFang SC",
-        "Microsoft YaHei",
-        sans-serif;
-    }
-
-    body {
-      padding:
-        max(22px, env(safe-area-inset-top))
-        16px
-        max(32px, env(safe-area-inset-bottom));
     }
 
     button,
@@ -94,10 +100,12 @@
 
     h1 {
       margin: 0;
+
       font-family:
         "Songti SC",
         "STSong",
         serif;
+
       font-size: clamp(30px, 8vw, 46px);
       font-weight: 500;
       letter-spacing: 0.04em;
@@ -110,12 +118,19 @@
     }
 
     .shell {
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      background: rgba(255, 255, 255, 0.42);
+      padding: 14px;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.75);
+
+      border-radius: 32px;
+
+      background:
+        rgba(255, 255, 255, 0.42);
+
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border-radius: 32px;
-      padding: 14px;
+
       box-shadow: var(--shadow);
     }
 
@@ -123,28 +138,38 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
+
       padding: 6px;
-      background: rgba(255, 255, 255, 0.58);
-      border-radius: 22px;
       margin-bottom: 14px;
+
+      background:
+        rgba(255, 255, 255, 0.58);
+
+      border-radius: 22px;
     }
 
     .tab {
+      min-height: 46px;
+
       border: 0;
+      border-radius: 17px;
+
       background: transparent;
       color: var(--muted);
-      min-height: 46px;
-      border-radius: 17px;
+
       transition: 0.2s ease;
     }
 
     .tab.active {
       color: white;
-      background: linear-gradient(
-        135deg,
-        #c4a3ef,
-        #a58fe5
-      );
+
+      background:
+        linear-gradient(
+          135deg,
+          #c4a3ef,
+          #a58fe5
+        );
+
       box-shadow:
         0 8px 22px rgba(151, 119, 214, 0.24);
     }
@@ -171,11 +196,16 @@
     }
 
     .section-card {
-      background: var(--card);
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      border-radius: 26px;
       padding: 20px;
       margin-top: 12px;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.72);
+
+      border-radius: 26px;
+
+      background: var(--card);
+
       box-shadow:
         0 10px 34px rgba(95, 78, 125, 0.08);
     }
@@ -185,6 +215,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+
       margin-bottom: 16px;
     }
 
@@ -206,16 +237,21 @@
 
     .status-box {
       min-height: 116px;
-      background: rgba(255, 255, 255, 0.70);
-      border: 1px solid rgba(255, 255, 255, 0.86);
-      border-radius: 22px;
       padding: 16px;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.86);
+
+      border-radius: 22px;
+
+      background:
+        rgba(255, 255, 255, 0.70);
     }
 
     .status-label {
+      margin-bottom: 10px;
       color: var(--muted);
       font-size: 13px;
-      margin-bottom: 10px;
     }
 
     .status-value {
@@ -223,6 +259,7 @@
         "Songti SC",
         "STSong",
         serif;
+
       font-size: 24px;
       line-height: 1.25;
       word-break: break-word;
@@ -235,13 +272,15 @@
     }
 
     .overview-quote {
+      padding: 4px 2px;
+
       font-family:
         "Songti SC",
         "STSong",
         serif;
+
       font-size: 18px;
       line-height: 1.8;
-      padding: 4px 2px;
     }
 
     .metric-list {
@@ -250,10 +289,15 @@
     }
 
     .metric {
-      border-radius: 22px;
       padding: 16px;
-      background: rgba(255, 255, 255, 0.76);
-      border: 1px solid rgba(255, 255, 255, 0.88);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.88);
+
+      border-radius: 22px;
+
+      background:
+        rgba(255, 255, 255, 0.76);
     }
 
     .metric-top {
@@ -261,6 +305,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+
       margin-bottom: 12px;
     }
 
@@ -268,12 +313,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
+
       font-size: 16px;
     }
 
     .metric-dot {
       width: 11px;
       height: 11px;
+
       border-radius: 50%;
       flex: 0 0 auto;
     }
@@ -284,43 +331,44 @@
     }
 
     .metric-level {
+      margin-left: 6px;
       color: var(--muted);
       font-size: 12px;
-      margin-left: 6px;
       font-weight: 400;
     }
 
     .track {
       height: 9px;
-      background: rgba(132, 117, 151, 0.10);
+
+      background:
+        rgba(132, 117, 151, 0.10);
+
       border-radius: 999px;
       overflow: hidden;
     }
 
     .fill {
       height: 100%;
-      width: 0;
       border-radius: inherit;
       transition: width 0.5s ease;
     }
 
-    .metric-desc {
-      color: var(--muted);
-      margin-top: 10px;
-      font-size: 13px;
-      line-height: 1.65;
-    }
+    .text-card {
+      padding: 17px;
 
-    .state-card {
       white-space: pre-wrap;
       word-break: break-word;
-      background: rgba(247, 243, 252, 0.78);
+
+      background:
+        rgba(247, 243, 252, 0.78);
+
       border-radius: 20px;
-      padding: 16px;
+
       color: #655d70;
       font-size: 13px;
-      line-height: 1.75;
-      max-height: 320px;
+      line-height: 1.85;
+
+      max-height: 520px;
       overflow: auto;
     }
 
@@ -330,10 +378,15 @@
     }
 
     .event-item {
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
       padding: 15px;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.88);
+
+      border-radius: 20px;
+
+      background:
+        rgba(255, 255, 255, 0.72);
     }
 
     .event-head {
@@ -341,6 +394,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+
       margin-bottom: 8px;
     }
 
@@ -368,59 +422,46 @@
       font-size: 11px;
     }
 
-    .placeholder {
-      text-align: center;
-      padding: 42px 18px;
-    }
-
-    .placeholder-icon {
-      font-size: 34px;
-      margin-bottom: 14px;
-    }
-
-    .placeholder h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
-
-    .placeholder p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
     .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
+
       margin-top: 14px;
     }
 
     .action-btn {
-      border: 0;
       min-height: 48px;
+
+      border: 0;
       border-radius: 17px;
-      background: rgba(255, 255, 255, 0.78);
+
+      background:
+        rgba(255, 255, 255, 0.78);
+
       color: var(--text);
+
       box-shadow:
         0 8px 20px rgba(92, 75, 122, 0.08);
     }
 
     .action-btn.primary {
       color: white;
-      background: linear-gradient(
-        135deg,
-        #bea0ef,
-        #9a86df
-      );
+
+      background:
+        linear-gradient(
+          135deg,
+          #bea0ef,
+          #9a86df
+        );
     }
 
     .footer {
+      padding: 18px 4px 4px;
+
       text-align: center;
       color: var(--muted);
       font-size: 12px;
-      padding: 18px 4px 4px;
       line-height: 1.7;
     }
 
@@ -428,13 +469,18 @@
       position: fixed;
       inset: 0;
       z-index: 999;
-      background: rgba(43, 35, 55, 0.28);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       padding: 22px;
+
+      background:
+        rgba(43, 35, 55, 0.28);
+
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .modal-backdrop.hidden {
@@ -443,25 +489,32 @@
 
     .modal {
       width: min(100%, 420px);
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 28px;
       padding: 24px;
+
+      background:
+        rgba(255, 255, 255, 0.92);
+
+      border-radius: 28px;
+
       box-shadow:
         0 24px 80px rgba(67, 53, 88, 0.20);
     }
 
     .modal h2 {
       margin: 0 0 8px;
+
       font-family:
         "Songti SC",
         "STSong",
         serif;
+
       font-size: 28px;
       font-weight: 500;
     }
 
     .modal p {
       margin: 0 0 18px;
+
       color: var(--muted);
       line-height: 1.7;
       font-size: 14px;
@@ -469,27 +522,28 @@
 
     .key-input {
       width: 100%;
-      border: 1px solid rgba(133, 111, 163, 0.18);
-      background: rgba(248, 245, 252, 0.92);
       min-height: 50px;
-      border-radius: 16px;
-      padding: 0 14px;
-      outline: none;
-      color: var(--text);
-    }
 
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 14px;
+      padding: 0 14px;
+
+      border:
+        1px solid rgba(133, 111, 163, 0.18);
+
+      border-radius: 16px;
+
+      background:
+        rgba(248, 245, 252, 0.92);
+
+      color: var(--text);
+      outline: none;
     }
 
     .error {
-      color: #b15f74;
-      font-size: 13px;
       min-height: 20px;
       margin-top: 10px;
+
+      color: #b15f74;
+      font-size: 13px;
     }
 
     .loading {
@@ -500,16 +554,25 @@
     .toast {
       position: fixed;
       left: 50%;
-      bottom: max(24px, env(safe-area-inset-bottom));
-      transform: translateX(-50%);
+      bottom:
+        max(24px, env(safe-area-inset-bottom));
       z-index: 1000;
-      background: rgba(69, 57, 82, 0.92);
-      color: white;
+
+      transform: translateX(-50%);
+
       padding: 11px 16px;
+
       border-radius: 999px;
+
+      background:
+        rgba(69, 57, 82, 0.92);
+
+      color: white;
       font-size: 13px;
+
       opacity: 0;
       pointer-events: none;
+
       transition: 0.2s ease;
       white-space: nowrap;
     }
@@ -518,19 +581,9 @@
       opacity: 1;
     }
 
-    @media (max-width: 460px) {
+    @media max-width {
       .shell {
-        border-radius: 28px;
         padding: 10px;
-      }
-
-      .section-card {
-        padding: 16px;
-        border-radius: 23px;
-      }
-
-      .tab {
-        font-size: 13px;
       }
     }
   </style>
@@ -552,29 +605,49 @@
       </div>
     </header>
 
-    <section class="shell" id="appShell">
+    <section
+      class="shell"
+      id="appShell"
+    >
       <nav class="tabs">
-        <button class="tab active" data-page="overview">
+        <button
+          class="tab active"
+          data-page="overview"
+        >
           总览
         </button>
 
-        <button class="tab" data-page="body">
+        <button
+          class="tab"
+          data-page="body"
+        >
           身体
         </button>
 
-        <button class="tab" data-page="emotion">
+        <button
+          class="tab"
+          data-page="emotion"
+        >
           情绪
         </button>
 
-        <button class="tab" data-page="memory">
+        <button
+          class="tab"
+          data-page="memory"
+        >
           记忆
         </button>
       </nav>
 
-      <section class="page active" id="page-overview">
+      <section
+        class="page active"
+        id="page-overview"
+      >
         <div class="section-card">
           <div class="section-title">
-            <h2>现在的我</h2>
+            <h2>
+              现在的我
+            </h2>
 
             <small id="lastUpdated">
               尚未读取
@@ -587,7 +660,10 @@
                 身体周期
               </div>
 
-              <div class="status-value" id="overviewCycle">
+              <div
+                class="status-value"
+                id="overviewCycle"
+              >
                 —
               </div>
 
@@ -601,7 +677,10 @@
                 当前情绪
               </div>
 
-              <div class="status-value" id="overviewEmotion">
+              <div
+                class="status-value"
+                id="overviewEmotion"
+              >
                 —
               </div>
 
@@ -615,7 +694,10 @@
                 当前事件
               </div>
 
-              <div class="status-value" id="overviewEvent">
+              <div
+                class="status-value"
+                id="overviewEvent"
+              >
                 —
               </div>
 
@@ -626,15 +708,18 @@
 
             <div class="status-box">
               <div class="status-label">
-                关系亲近度
+                记忆状态
               </div>
 
-              <div class="status-value" id="overviewCloseness">
+              <div
+                class="status-value"
+                id="overviewMemory"
+              >
                 —
               </div>
 
               <div class="status-sub">
-                emotion
+                Ombre Brain
               </div>
             </div>
           </div>
@@ -642,17 +727,24 @@
 
         <div class="section-card">
           <div class="section-title">
-            <h2>今日潮汐</h2>
+            <h2>
+              今日潮汐
+            </h2>
           </div>
 
-          <div class="overview-quote" id="overviewSummary">
+          <div
+            class="overview-quote"
+            id="overviewSummary"
+          >
             正在读取状态。
           </div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>三层状态</h2>
+            <h2>
+              三层状态
+            </h2>
           </div>
 
           <div class="status-grid">
@@ -661,7 +753,10 @@
                 身体
               </div>
 
-              <div class="status-value" id="overviewBodyState">
+              <div
+                class="status-value"
+                id="overviewBodyState"
+              >
                 —
               </div>
 
@@ -675,7 +770,10 @@
                 情绪
               </div>
 
-              <div class="status-value" id="overviewMoodState">
+              <div
+                class="status-value"
+                id="overviewMoodState"
+              >
                 —
               </div>
 
@@ -689,7 +787,10 @@
                 关系
               </div>
 
-              <div class="status-value" id="overviewRelationshipState">
+              <div
+                class="status-value"
+                id="overviewRelationshipState"
+              >
                 —
               </div>
 
@@ -703,8 +804,11 @@
                 记忆
               </div>
 
-              <div class="status-value">
-                待接入
+              <div
+                class="status-value"
+                id="overviewMemoryState"
+              >
+                —
               </div>
 
               <div class="status-sub">
@@ -715,10 +819,15 @@
         </div>
       </section>
 
-      <section class="page" id="page-body">
+      <section
+        class="page"
+        id="page-body"
+      >
         <div class="section-card">
           <div class="section-title">
-            <h2>当前状态</h2>
+            <h2>
+              当前状态
+            </h2>
 
             <small id="bodyCycleKey">
               —
@@ -731,7 +840,10 @@
                 周期
               </div>
 
-              <div class="status-value" id="bodyCycle">
+              <div
+                class="status-value"
+                id="bodyCycle"
+              >
                 —
               </div>
             </div>
@@ -741,7 +853,10 @@
                 事件
               </div>
 
-              <div class="status-value" id="bodyEvent">
+              <div
+                class="status-value"
+                id="bodyEvent"
+              >
                 —
               </div>
             </div>
@@ -750,41 +865,62 @@
 
         <div class="section-card">
           <div class="section-title">
-            <h2>身体数值</h2>
+            <h2>
+              身体数值
+            </h2>
 
             <small>
               0 — 100
             </small>
           </div>
 
-          <div class="metric-list" id="metricList"></div>
+          <div
+            class="metric-list"
+            id="metricList"
+          ></div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>状态卡</h2>
+            <h2>
+              状态卡
+            </h2>
           </div>
 
-          <div class="state-card" id="stateCard">
+          <div
+            class="text-card"
+            id="stateCard"
+          >
             尚未读取
           </div>
         </div>
 
         <div class="actions">
-          <button class="action-btn" id="refreshButton">
+          <button
+            class="action-btn"
+            id="refreshButton"
+          >
             刷新全部
           </button>
 
-          <button class="action-btn primary" id="tickButton">
+          <button
+            class="action-btn primary"
+            id="tickButton"
+          >
             推进一次
           </button>
         </div>
       </section>
 
-      <section class="page" id="page-emotion">
+      <section
+        class="page"
+        id="page-emotion"
+      >
         <div class="section-card">
           <div class="section-title">
-            <h2>当前情绪</h2>
+            <h2>
+              当前情绪
+            </h2>
 
             <small>
               emotion
@@ -797,7 +933,10 @@
                 心情
               </div>
 
-              <div class="status-value" id="emotionMood">
+              <div
+                class="status-value"
+                id="emotionMood"
+              >
                 —
               </div>
             </div>
@@ -807,7 +946,10 @@
                 未解决事件
               </div>
 
-              <div class="status-value" id="emotionUnresolved">
+              <div
+                class="status-value"
+                id="emotionUnresolved"
+              >
                 —
               </div>
 
@@ -821,7 +963,10 @@
                 PA
               </div>
 
-              <div class="status-value" id="emotionPA">
+              <div
+                class="status-value"
+                id="emotionPA"
+              >
                 —
               </div>
 
@@ -835,7 +980,10 @@
                 NA
               </div>
 
-              <div class="status-value" id="emotionNA">
+              <div
+                class="status-value"
+                id="emotionNA"
+              >
                 —
               </div>
 
@@ -848,53 +996,138 @@
 
         <div class="section-card">
           <div class="section-title">
-            <h2>关系状态</h2>
+            <h2>
+              关系状态
+            </h2>
 
             <small>
               0 — 100
             </small>
           </div>
 
-          <div class="metric-list" id="relationshipMetricList"></div>
+          <div
+            class="metric-list"
+            id="relationshipMetricList"
+          ></div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>最近最突出的事件</h2>
+            <h2>
+              最近最突出的事件
+            </h2>
           </div>
 
-          <div class="state-card" id="topEmotionEvent">
+          <div
+            class="text-card"
+            id="topEmotionEvent"
+          >
             尚未读取
           </div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>最近情绪事件</h2>
+            <h2>
+              最近情绪事件
+            </h2>
 
             <small id="emotionEventCount">
               0 条
             </small>
           </div>
 
-          <div class="event-list" id="emotionEventList"></div>
+          <div
+            class="event-list"
+            id="emotionEventList"
+          ></div>
         </div>
       </section>
 
-      <section class="page" id="page-memory">
-        <div class="section-card placeholder">
-          <div class="placeholder-icon">
-            ✦
+      <section
+        class="page"
+        id="page-memory"
+      >
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              当前浮现
+            </h2>
+
+            <small>
+              Ombre Brain
+            </small>
           </div>
 
-          <h3>
-            Ombre Brain 正在接入
-          </h3>
+          <div
+            class="text-card"
+            id="memoryText"
+          >
+            尚未读取
+          </div>
+        </div>
 
-          <p>
-            下一步这里会显示最近记忆、核心记忆、
-            活跃计划与梦境整理。
-          </p>
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              梦境整理
+            </h2>
+
+            <small>
+              Dream
+            </small>
+          </div>
+
+          <div
+            class="text-card"
+            id="dreamText"
+          >
+            尚未读取
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              连接状态
+            </h2>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-box">
+              <div class="status-label">
+                记忆通道
+              </div>
+
+              <div
+                class="status-value"
+                id="memoryConnection"
+              >
+                —
+              </div>
+
+              <div class="status-sub">
+                breath-hook
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                梦境通道
+              </div>
+
+              <div
+                class="status-value"
+                id="dreamConnection"
+              >
+                —
+              </div>
+
+              <div class="status-sub">
+                dream-hook
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </section>
@@ -906,7 +1139,10 @@
     </footer>
   </main>
 
-  <div class="modal-backdrop hidden" id="keyModal">
+  <div
+    class="modal-backdrop hidden"
+    id="keyModal"
+  >
     <div class="modal">
       <h2>
         进入状态面板
@@ -925,116 +1161,119 @@
         placeholder="EVENTIDE_API_KEY"
       >
 
-      <div class="error" id="keyError"></div>
+      <div
+        class="error"
+        id="keyError"
+      ></div>
 
-      <div class="modal-actions">
-        <button class="action-btn primary" id="loginButton">
-          进入
-        </button>
-      </div>
+      <button
+        class="action-btn primary"
+        id="loginButton"
+        style="width:100%; margin-top:14px;"
+      >
+        进入
+      </button>
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div
+    class="toast"
+    id="toast"
+  ></div>
 
   <script>
-    const metricDefinitions = [
-      {
-        key: "reserve",
-        name: "蓄积感",
-        color: "#a98ce6"
-      },
-      {
-        key: "heat",
-        name: "热度",
-        color: "#ef9c9c"
-      },
-      {
-        key: "pressure",
-        name: "压抑感",
-        color: "#c69ae0"
-      },
-      {
-        key: "control",
-        name: "控制力",
-        color: "#8ea8dc"
-      },
-      {
-        key: "sensitivity",
-        name: "敏感度",
-        color: "#e7a4c7"
-      },
-      {
-        key: "possessiveness",
-        name: "占有欲",
-        color: "#ad8be7"
-      },
-      {
-        key: "fatigue",
-        name: "疲惫感",
-        color: "#9baad0"
-      }
+    const bodyMetrics = [
+      ["reserve", "蓄积感", "#a98ce6"],
+      ["heat", "热度", "#ef9c9c"],
+      ["pressure", "压抑感", "#c69ae0"],
+      ["control", "控制力", "#8ea8dc"],
+      ["sensitivity", "敏感度", "#e7a4c7"],
+      ["possessiveness", "占有欲", "#ad8be7"],
+      ["fatigue", "疲惫感", "#9baad0"]
     ];
 
-    const relationshipDefinitions = [
-      {
-        key: "relationship_safety",
-        name: "安全感",
-        color: "#9bcdb9"
-      },
-      {
-        key: "relationship_trust",
-        name: "信任感",
-        color: "#9eaedf"
-      },
-      {
-        key: "relationship_closeness",
-        name: "亲近感",
-        color: "#e7a4c7"
-      }
+    const relationshipMetrics = [
+      [
+        "relationship_safety",
+        "安全感",
+        "#9bcdb9"
+      ],
+      [
+        "relationship_trust",
+        "信任感",
+        "#9eaedf"
+      ],
+      [
+        "relationship_closeness",
+        "亲近感",
+        "#e7a4c7"
+      ]
     ];
 
     let apiKey =
-      sessionStorage.getItem("eventide_api_key") || "";
+      sessionStorage.getItem(
+        "eventide_api_key"
+      ) || "";
 
-    let latestBodyValues = {};
+    let latestBody = {};
     let latestEmotion = null;
-
-    const keyModal =
-      document.getElementById("keyModal");
-
-    const apiKeyInput =
-      document.getElementById("apiKeyInput");
-
-    const keyError =
-      document.getElementById("keyError");
+    let latestMemory = null;
 
     const appShell =
-      document.getElementById("appShell");
+      document.getElementById(
+        "appShell"
+      );
+
+    const keyModal =
+      document.getElementById(
+        "keyModal"
+      );
+
+    const apiKeyInput =
+      document.getElementById(
+        "apiKeyInput"
+      );
+
+    const keyError =
+      document.getElementById(
+        "keyError"
+      );
 
     function showToast(message) {
       const toast =
-        document.getElementById("toast");
+        document.getElementById(
+          "toast"
+        );
 
       toast.textContent = message;
-      toast.classList.add("show");
+
+      toast.classList.add(
+        "show"
+      );
 
       setTimeout(() => {
-        toast.classList.remove("show");
+        toast.classList.remove(
+          "show"
+        );
       }, 1800);
     }
 
-    function showKeyModal(message = "") {
-      keyError.textContent = message;
-      keyModal.classList.remove("hidden");
+    function showKeyModal(
+      message = ""
+    ) {
+      keyError.textContent =
+        message;
 
-      setTimeout(() => {
-        apiKeyInput.focus();
-      }, 100);
+      keyModal.classList.remove(
+        "hidden"
+      );
     }
 
     function hideKeyModal() {
-      keyModal.classList.add("hidden");
+      keyModal.classList.add(
+        "hidden"
+      );
+
       keyError.textContent = "";
       apiKeyInput.value = "";
     }
@@ -1043,20 +1282,22 @@
       path,
       options = {}
     ) {
-      const headers = {
-        ...(options.headers || {}),
-        "X-API-Key": apiKey
-      };
+      const response =
+        await fetch(
+          path,
+          {
+            ...options,
+            headers: {
+              ...options.headers,
+              "X-API-Key":
+                apiKey
+            }
+          }
+        );
 
-      const response = await fetch(
-        path,
-        {
-          ...options,
-          headers
-        }
-      );
-
-      if (response.status === 401) {
+      if (
+        response.status === 401
+      ) {
         sessionStorage.removeItem(
           "eventide_api_key"
         );
@@ -1073,11 +1314,8 @@
       }
 
       if (!response.ok) {
-        const text =
-          await response.text();
-
         throw new Error(
-          text || `HTTP ${response.status}`
+          `HTTP ${response.status}`
         );
       }
 
@@ -1104,7 +1342,9 @@
       return "低";
     }
 
-    function relationshipText(value) {
+    function relationshipText(
+      value
+    ) {
       if (value >= 90) {
         return "很稳";
       }
@@ -1124,24 +1364,32 @@
       return "承压";
     }
 
-    function humanCycleName(key) {
+    function humanCycleName(
+      key
+    ) {
       const map = {
         stable: "平稳期"
       };
 
-      return map[key] || key || "未知";
+      return map[key] ||
+        key ||
+        "未知";
     }
 
-    function humanEventName(key) {
+    function humanEventName(
+      key
+    ) {
       if (!key) {
         return "暂无事件";
       }
 
       const map = {
-        waiting_anxiety: "等待焦躁"
+        waiting_anxiety:
+          "等待焦躁"
       };
 
-      return map[key] || key;
+      return map[key] ||
+        key;
     }
 
     function formatTime(ts) {
@@ -1150,15 +1398,9 @@
       }
 
       const date =
-        new Date(Number(ts));
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "未知时间";
-      }
+        new Date(
+          Number(ts)
+        );
 
       return date.toLocaleString(
         "zh-CN",
@@ -1171,25 +1413,39 @@
       );
     }
 
-    function buildBodyMetricList(values) {
+    function buildMetricList(
+      containerId,
+      definitions,
+      data,
+      multiply = 1
+    ) {
       const container =
         document.getElementById(
-          "metricList"
+          containerId
         );
 
       container.innerHTML = "";
 
-      metricDefinitions.forEach(
+      definitions.forEach(
         definition => {
-          const rawValue =
-            Number(
-              values?.[definition.key] ?? 0
-            );
+          const key =
+            definition[0];
+
+          const name =
+            definition[1];
+
+          const color =
+            definition[2];
 
           const value =
             Math.max(
               0,
-              Math.min(100, rawValue)
+              Math.min(
+                100,
+                Number(
+                  data?.[key] || 0
+                ) * multiply
+              )
             );
 
           const card =
@@ -1197,18 +1453,19 @@
               "div"
             );
 
-          card.className = "metric";
+          card.className =
+            "metric";
 
           card.innerHTML = `
             <div class="metric-top">
               <div class="metric-name">
                 <span
                   class="metric-dot"
-                  style="background:${definition.color}"
+                  style="background:${color}"
                 ></span>
 
                 <span>
-                  ${definition.name}
+                  ${name}
                 </span>
               </div>
 
@@ -1226,231 +1483,32 @@
                 class="fill"
                 style="
                   width:${value}%;
-                  background:${definition.color};
+                  background:${color};
                 "
               ></div>
             </div>
           `;
 
-          container.appendChild(card);
+          container.appendChild(
+            card
+          );
         }
       );
     }
 
-    function buildRelationshipMetrics(mood) {
-      const container =
-        document.getElementById(
-          "relationshipMetricList"
-        );
-
-      container.innerHTML = "";
-
-      relationshipDefinitions.forEach(
-        definition => {
-          const rawValue =
-            Number(
-              mood?.[definition.key] ?? 0
-            ) * 100;
-
-          const value =
-            Math.max(
-              0,
-              Math.min(100, rawValue)
-            );
-
-          const card =
-            document.createElement(
-              "div"
-            );
-
-          card.className = "metric";
-
-          card.innerHTML = `
-            <div class="metric-top">
-              <div class="metric-name">
-                <span
-                  class="metric-dot"
-                  style="background:${definition.color}"
-                ></span>
-
-                <span>
-                  ${definition.name}
-                </span>
-              </div>
-
-              <div class="metric-value">
-                ${Math.round(value)}
-
-                <span class="metric-level">
-                  ${relationshipText(value)}
-                </span>
-              </div>
-            </div>
-
-            <div class="track">
-              <div
-                class="fill"
-                style="
-                  width:${value}%;
-                  background:${definition.color};
-                "
-              ></div>
-            </div>
-          `;
-
-          container.appendChild(card);
-        }
-      );
-    }
-
-    function buildEmotionEvents(events) {
-      const container =
-        document.getElementById(
-          "emotionEventList"
-        );
-
-      const count =
-        document.getElementById(
-          "emotionEventCount"
-        );
-
-      container.innerHTML = "";
-
-      const visibleEvents =
-        Array.isArray(events)
-          ? events.slice(0, 10)
-          : [];
-
-      count.textContent =
-        `${visibleEvents.length} 条`;
-
-      if (!visibleEvents.length) {
-        container.innerHTML = `
-          <div class="event-item">
-            <div class="event-content">
-              暂时没有情绪事件。
-            </div>
-          </div>
-        `;
-
-        return;
-      }
-
-      visibleEvents.forEach(event => {
-        const item =
-          document.createElement(
-            "div"
-          );
-
-        item.className =
-          "event-item";
-
-        item.innerHTML = `
-          <div class="event-head">
-            <div class="event-word">
-              ${event.word || "情绪事件"}
-            </div>
-
-            <div class="event-time">
-              ${formatTime(event.ts)}
-            </div>
-          </div>
-
-          <div class="event-content">
-            ${event.content || "暂无内容"}
-          </div>
-
-          <div class="event-meta">
-            ${event.emotion_family || "general"}
-          </div>
-        `;
-
-        container.appendChild(item);
-      });
-    }
-
-    function buildOverviewSummary() {
-      const bodyEntries =
-        metricDefinitions
-          .map(definition => ({
-            name: definition.name,
-            value: Number(
-              latestBodyValues?.[
-                definition.key
-              ] ?? 0
-            )
-          }))
-          .sort(
-            (a, b) =>
-              b.value - a.value
-          );
-
-      const bodyStrongest =
-        bodyEntries[0];
-
-      const mood =
-        latestEmotion;
-
-      if (
-        !bodyStrongest &&
-        !mood
-      ) {
-        return "状态仍在等待读取。";
-      }
-
-      const parts = [];
-
-      if (mood?.mood) {
-        parts.push(
-          `现在的情绪底色是${mood.mood}`
-        );
-      }
-
-      if (bodyStrongest) {
-        parts.push(
-          `身体上最明显的是${bodyStrongest.name}`
-        );
-      }
-
-      if (
-        mood?.relationship_closeness !==
-        undefined
-      ) {
-        const closeness =
-          mood.relationship_closeness *
-          100;
-
-        parts.push(
-          `关系亲近度处在${relationshipText(closeness)}状态`
-        );
-      }
-
-      return `${parts.join("，")}。`;
-    }
-
-    function updateOverviewSummary() {
-      document.getElementById(
-        "overviewSummary"
-      ).textContent =
-        buildOverviewSummary();
-    }
-
-    function renderState(data) {
+    function renderBody(data) {
       const state =
         data.state || {};
 
-      const values =
+      latestBody =
         state.values || {};
 
-      latestBodyValues =
-        values;
-
-      const cycleName =
+      const cycle =
         humanCycleName(
           state.cycle_key
         );
 
-      const eventName =
+      const event =
         humanEventName(
           state.active_event_key
         );
@@ -1458,29 +1516,17 @@
       document.getElementById(
         "overviewCycle"
       ).textContent =
-        cycleName;
+        cycle;
 
       document.getElementById(
         "overviewEvent"
       ).textContent =
-        eventName;
-
-      document.getElementById(
-        "overviewBodyState"
-      ).textContent =
-        levelText(
-          Math.max(
-            ...Object.values(values)
-              .map(Number)
-              .filter(Number.isFinite),
-            0
-          )
-        );
+        event;
 
       document.getElementById(
         "bodyCycle"
       ).textContent =
-        cycleName;
+        cycle;
 
       document.getElementById(
         "bodyCycleKey"
@@ -1490,17 +1536,39 @@
       document.getElementById(
         "bodyEvent"
       ).textContent =
-        eventName;
+        event;
 
       document.getElementById(
         "stateCard"
       ).textContent =
         data.state_card ||
-        "当前没有状态卡内容。";
+        "暂无状态卡。";
 
-      buildBodyMetricList(values);
+      const highest =
+        Math.max(
+          ...Object.values(
+            latestBody
+          )
+            .map(Number)
+            .filter(
+              Number.isFinite
+            ),
+          0
+        );
 
-      updateOverviewSummary();
+      document.getElementById(
+        "overviewBodyState"
+      ).textContent =
+        levelText(
+          highest
+        );
+
+      buildMetricList(
+        "metricList",
+        bodyMetrics,
+        latestBody,
+        1
+      );
     }
 
     function renderEmotion(data) {
@@ -1508,11 +1576,6 @@
         !data ||
         data.ok === false
       ) {
-        document.getElementById(
-          "emotionMood"
-        ).textContent =
-          "连接失败";
-
         return;
       }
 
@@ -1538,7 +1601,9 @@
       ).textContent =
         mood.pa !== undefined
           ? Math.round(
-              Number(mood.pa) * 100
+              Number(
+                mood.pa
+              ) * 100
             )
           : "—";
 
@@ -1547,7 +1612,9 @@
       ).textContent =
         mood.na !== undefined
           ? Math.round(
-              Number(mood.na) * 100
+              Number(
+                mood.na
+              ) * 100
             )
           : "—";
 
@@ -1560,17 +1627,6 @@
         "overviewMoodState"
       ).textContent =
         mood.mood || "—";
-
-      const closeness =
-        Number(
-          mood.relationship_closeness ||
-          0
-        ) * 100;
-
-      document.getElementById(
-        "overviewCloseness"
-      ).textContent =
-        `${Math.round(closeness)}%`;
 
       const relationshipAverage =
         (
@@ -1595,43 +1651,280 @@
           relationshipAverage
         );
 
+      buildMetricList(
+        "relationshipMetricList",
+        relationshipMetrics,
+        mood,
+        100
+      );
+
       const topEvent =
         mood.top_event;
 
-      if (topEvent) {
-        document.getElementById(
-          "topEmotionEvent"
-        ).textContent =
-          `${topEvent.word || "情绪事件"}\n\n${topEvent.content || "暂无内容"}`;
-      } else {
-        document.getElementById(
-          "topEmotionEvent"
-        ).textContent =
-          "当前没有突出的情绪事件。";
-      }
+      document.getElementById(
+        "topEmotionEvent"
+      ).textContent =
+        topEvent
+          ? `${topEvent.word || "情绪事件"}\n\n${topEvent.content || "暂无内容"}`
+          : "当前没有突出的情绪事件。";
 
-      buildRelationshipMetrics(
-        mood
-      );
-
-      buildEmotionEvents(
+      renderEmotionEvents(
         data.recent_events || []
       );
+    }
 
-      updateOverviewSummary();
+    function renderEmotionEvents(
+      events
+    ) {
+      const container =
+        document.getElementById(
+          "emotionEventList"
+        );
+
+      const visible =
+        Array.isArray(events)
+          ? events.slice(
+              0,
+              10
+            )
+          : [];
+
+      document.getElementById(
+        "emotionEventCount"
+      ).textContent =
+        `${visible.length} 条`;
+
+      container.innerHTML = "";
+
+      if (!visible.length) {
+        container.textContent =
+          "暂时没有情绪事件。";
+
+        return;
+      }
+
+      visible.forEach(
+        event => {
+          const item =
+            document.createElement(
+              "div"
+            );
+
+          item.className =
+            "event-item";
+
+          const head =
+            document.createElement(
+              "div"
+            );
+
+          head.className =
+            "event-head";
+
+          const word =
+            document.createElement(
+              "div"
+            );
+
+          word.className =
+            "event-word";
+
+          word.textContent =
+            event.word ||
+            "情绪事件";
+
+          const time =
+            document.createElement(
+              "div"
+            );
+
+          time.className =
+            "event-time";
+
+          time.textContent =
+            formatTime(
+              event.ts
+            );
+
+          head.appendChild(
+            word
+          );
+
+          head.appendChild(
+            time
+          );
+
+          const content =
+            document.createElement(
+              "div"
+            );
+
+          content.className =
+            "event-content";
+
+          content.textContent =
+            event.content ||
+            "暂无内容";
+
+          const meta =
+            document.createElement(
+              "div"
+            );
+
+          meta.className =
+            "event-meta";
+
+          meta.textContent =
+            event.emotion_family ||
+            "general";
+
+          item.appendChild(
+            head
+          );
+
+          item.appendChild(
+            content
+          );
+
+          item.appendChild(
+            meta
+          );
+
+          container.appendChild(
+            item
+          );
+        }
+      );
+    }
+
+    function renderMemory(data) {
+      latestMemory =
+        data;
+
+      const memory =
+        data?.memory || "";
+
+      const dream =
+        data?.dream || "";
+
+      document.getElementById(
+        "memoryText"
+      ).textContent =
+        memory.trim()
+          ? memory
+          : "当前没有浮现出的记忆。";
+
+      document.getElementById(
+        "dreamText"
+      ).textContent =
+        dream.trim()
+          ? dream
+          : "当前没有梦境整理内容。";
+
+      const memoryConnected =
+        Boolean(
+          memory.trim()
+        );
+
+      const dreamConnected =
+        Boolean(
+          dream.trim()
+        );
+
+      document.getElementById(
+        "memoryConnection"
+      ).textContent =
+        memoryConnected
+          ? "已连接"
+          : "暂无内容";
+
+      document.getElementById(
+        "dreamConnection"
+      ).textContent =
+        dreamConnected
+          ? "已连接"
+          : "暂无内容";
+
+      document.getElementById(
+        "overviewMemory"
+      ).textContent =
+        data?.ok
+          ? "已连接"
+          : "异常";
+
+      document.getElementById(
+        "overviewMemoryState"
+      ).textContent =
+        memoryConnected
+          ? "活跃"
+          : "安静";
+    }
+
+    function updateSummary() {
+      const bodyEntry =
+        bodyMetrics
+          .map(
+            item => ({
+              name: item[1],
+              value: Number(
+                latestBody?.[
+                  item[0]
+                ] || 0
+              )
+            })
+          )
+          .sort(
+            (a, b) =>
+              b.value -
+              a.value
+          )[0];
+
+      const parts = [];
+
+      if (
+        latestEmotion?.mood
+      ) {
+        parts.push(
+          `现在的情绪底色是${latestEmotion.mood}`
+        );
+      }
+
+      if (bodyEntry) {
+        parts.push(
+          `身体上最明显的是${bodyEntry.name}`
+        );
+      }
+
+      if (
+        latestMemory?.ok
+      ) {
+        parts.push(
+          "记忆系统正在安静地保持连接"
+        );
+      }
+
+      document.getElementById(
+        "overviewSummary"
+      ).textContent =
+        parts.length
+          ? `${parts.join("，")}。`
+          : "状态正在读取中。";
     }
 
     function updateTime() {
       document.getElementById(
         "lastUpdated"
       ).textContent =
-        new Date().toLocaleTimeString(
-          "zh-CN",
-          {
-            hour: "2-digit",
-            minute: "2-digit"
-          }
-        );
+        new Date()
+          .toLocaleTimeString(
+            "zh-CN",
+            {
+              hour:
+                "2-digit",
+              minute:
+                "2-digit"
+            }
+          );
     }
 
     async function loadAll() {
@@ -1642,46 +1935,47 @@
       try {
         const results =
           await Promise.allSettled([
-            apiRequest("/state"),
-            apiRequest("/emotion")
+            apiRequest(
+              "/state"
+            ),
+            apiRequest(
+              "/emotion"
+            ),
+            apiRequest(
+              "/memory"
+            )
           ]);
 
-        const bodyResult =
-          results[0];
-
-        const emotionResult =
-          results[1];
-
         if (
-          bodyResult.status ===
+          results[0].status ===
           "fulfilled"
         ) {
-          renderState(
-            bodyResult.value
+          renderBody(
+            results[0].value
           );
         }
 
         if (
-          emotionResult.status ===
+          results[1].status ===
           "fulfilled"
         ) {
           renderEmotion(
-            emotionResult.value
+            results[1].value
           );
         }
-
-        updateTime();
 
         if (
-          bodyResult.status ===
-            "rejected" &&
-          emotionResult.status ===
-            "rejected"
+          results[2].status ===
+          "fulfilled"
         ) {
-          showToast(
-            "状态读取失败"
+          renderMemory(
+            results[2].value
           );
         }
+
+        updateSummary();
+        updateTime();
+
       } finally {
         appShell.classList.remove(
           "loading"
@@ -1709,31 +2003,21 @@
             }
           );
 
-        renderState(data);
+        renderBody(data);
 
-        const emotion =
-          await apiRequest(
-            "/emotion"
-          );
-
-        renderEmotion(emotion);
-
-        updateTime();
+        await loadAll();
 
         showToast(
           data.changed
             ? "状态已推进"
             : "状态暂时没有变化"
         );
+
       } catch (error) {
-        if (
-          error.message !==
-          "Unauthorized"
-        ) {
-          showToast(
-            "推进状态失败"
-          );
-        }
+        showToast(
+          "推进状态失败"
+        );
+
       } finally {
         appShell.classList.remove(
           "loading"
@@ -1742,45 +2026,53 @@
     }
 
     document
-      .querySelectorAll(".tab")
-      .forEach(tab => {
-        tab.addEventListener(
-          "click",
-          () => {
-            document
-              .querySelectorAll(
-                ".tab"
-              )
-              .forEach(item => {
-                item.classList.remove(
-                  "active"
+      .querySelectorAll(
+        ".tab"
+      )
+      .forEach(
+        tab => {
+          tab.addEventListener(
+            "click",
+            () => {
+              document
+                .querySelectorAll(
+                  ".tab"
+                )
+                .forEach(
+                  item => {
+                    item.classList.remove(
+                      "active"
+                    );
+                  }
                 );
-              });
 
-            document
-              .querySelectorAll(
-                ".page"
-              )
-              .forEach(page => {
-                page.classList.remove(
-                  "active"
+              document
+                .querySelectorAll(
+                  ".page"
+                )
+                .forEach(
+                  page => {
+                    page.classList.remove(
+                      "active"
+                    );
+                  }
                 );
-              });
 
-            tab.classList.add(
-              "active"
-            );
-
-            document
-              .getElementById(
-                `page-${tab.dataset.page}`
-              )
-              .classList.add(
+              tab.classList.add(
                 "active"
               );
-          }
-        );
-      });
+
+              document
+                .getElementById(
+                  `page-${tab.dataset.page}`
+                )
+                .classList.add(
+                  "active"
+                );
+            }
+          );
+        }
+      );
 
     document
       .getElementById(
@@ -1814,6 +2106,7 @@
             hideKeyModal();
 
             await loadAll();
+
           } catch (error) {
             if (
               error.message !==
@@ -1830,7 +2123,8 @@
       "keydown",
       event => {
         if (
-          event.key === "Enter"
+          event.key ===
+          "Enter"
         ) {
           document
             .getElementById(
