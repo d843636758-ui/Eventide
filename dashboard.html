@@ -2,11 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
-  <meta name="theme-color" content="#f4efff">
+
+  <meta
+    name="theme-color"
+    content="#f4efff"
+  >
+
   <title>洵舟状态</title>
 
   <style>
@@ -14,15 +20,9 @@
       --bg-top: #f9f6ff;
       --bg-bottom: #f1edff;
       --card: rgba(255, 255, 255, 0.76);
-      --card-strong: rgba(255, 255, 255, 0.92);
       --text: #40394c;
       --muted: #91899d;
-      --line: rgba(120, 100, 150, 0.10);
       --purple: #b99aef;
-      --purple-deep: #9d7fe0;
-      --pink: #eaa7c8;
-      --blue: #9eaedf;
-      --green: #9bcdb9;
       --shadow: 0 18px 50px rgba(111, 89, 145, 0.12);
     }
 
@@ -225,6 +225,7 @@
         serif;
       font-size: 24px;
       line-height: 1.25;
+      word-break: break-word;
     }
 
     .status-sub {
@@ -321,6 +322,50 @@
       line-height: 1.75;
       max-height: 320px;
       overflow: auto;
+    }
+
+    .event-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .event-item {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      border-radius: 20px;
+      padding: 15px;
+    }
+
+    .event-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .event-word {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .event-time {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .event-content {
+      color: #675f72;
+      font-size: 13px;
+      line-height: 1.7;
+      word-break: break-word;
+    }
+
+    .event-meta {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 11px;
     }
 
     .placeholder {
@@ -484,10 +529,6 @@
         border-radius: 23px;
       }
 
-      .status-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
       .tab {
         font-size: 13px;
       }
@@ -513,44 +554,27 @@
 
     <section class="shell" id="appShell">
       <nav class="tabs">
-        <button
-          class="tab active"
-          data-page="overview"
-        >
+        <button class="tab active" data-page="overview">
           总览
         </button>
 
-        <button
-          class="tab"
-          data-page="body"
-        >
+        <button class="tab" data-page="body">
           身体
         </button>
 
-        <button
-          class="tab"
-          data-page="emotion"
-        >
+        <button class="tab" data-page="emotion">
           情绪
         </button>
 
-        <button
-          class="tab"
-          data-page="memory"
-        >
+        <button class="tab" data-page="memory">
           记忆
         </button>
       </nav>
 
-      <section
-        class="page active"
-        id="page-overview"
-      >
+      <section class="page active" id="page-overview">
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              现在的我
-            </h2>
+            <h2>现在的我</h2>
 
             <small id="lastUpdated">
               尚未读取
@@ -563,18 +587,26 @@
                 身体周期
               </div>
 
-              <div
-                class="status-value"
-                id="overviewCycle"
-              >
+              <div class="status-value" id="overviewCycle">
                 —
               </div>
 
-              <div
-                class="status-sub"
-                id="overviewCycleSub"
-              >
-                等待读取
+              <div class="status-sub">
+                Eventide
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                当前情绪
+              </div>
+
+              <div class="status-value" id="overviewEmotion">
+                —
+              </div>
+
+              <div class="status-sub">
+                emotion
               </div>
             </div>
 
@@ -583,10 +615,7 @@
                 当前事件
               </div>
 
-              <div
-                class="status-value"
-                id="overviewEvent"
-              >
+              <div class="status-value" id="overviewEvent">
                 —
               </div>
 
@@ -594,29 +623,36 @@
                 Eventide
               </div>
             </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                关系亲近度
+              </div>
+
+              <div class="status-value" id="overviewCloseness">
+                —
+              </div>
+
+              <div class="status-sub">
+                emotion
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              今日潮汐
-            </h2>
+            <h2>今日潮汐</h2>
           </div>
 
-          <div
-            class="overview-quote"
-            id="overviewSummary"
-          >
-            正在等待身体状态。
+          <div class="overview-quote" id="overviewSummary">
+            正在读取状态。
           </div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              三层状态
-            </h2>
+            <h2>三层状态</h2>
           </div>
 
           <div class="status-grid">
@@ -625,10 +661,7 @@
                 身体
               </div>
 
-              <div
-                class="status-value"
-                id="overviewBodyState"
-              >
+              <div class="status-value" id="overviewBodyState">
                 —
               </div>
 
@@ -642,8 +675,8 @@
                 情绪
               </div>
 
-              <div class="status-value">
-                待接入
+              <div class="status-value" id="overviewMoodState">
+                —
               </div>
 
               <div class="status-sub">
@@ -656,8 +689,8 @@
                 关系
               </div>
 
-              <div class="status-value">
-                待接入
+              <div class="status-value" id="overviewRelationshipState">
+                —
               </div>
 
               <div class="status-sub">
@@ -682,15 +715,10 @@
         </div>
       </section>
 
-      <section
-        class="page"
-        id="page-body"
-      >
+      <section class="page" id="page-body">
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              当前状态
-            </h2>
+            <h2>当前状态</h2>
 
             <small id="bodyCycleKey">
               —
@@ -703,10 +731,7 @@
                 周期
               </div>
 
-              <div
-                class="status-value"
-                id="bodyCycle"
-              >
+              <div class="status-value" id="bodyCycle">
                 —
               </div>
             </div>
@@ -716,10 +741,7 @@
                 事件
               </div>
 
-              <div
-                class="status-value"
-                id="bodyEvent"
-              >
+              <div class="status-value" id="bodyEvent">
                 —
               </div>
             </div>
@@ -728,78 +750,138 @@
 
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              身体数值
-            </h2>
+            <h2>身体数值</h2>
 
             <small>
               0 — 100
             </small>
           </div>
 
-          <div
-            class="metric-list"
-            id="metricList"
-          ></div>
+          <div class="metric-list" id="metricList"></div>
         </div>
 
         <div class="section-card">
           <div class="section-title">
-            <h2>
-              状态卡
-            </h2>
+            <h2>状态卡</h2>
           </div>
 
-          <div
-            class="state-card"
-            id="stateCard"
-          >
+          <div class="state-card" id="stateCard">
             尚未读取
           </div>
         </div>
 
         <div class="actions">
-          <button
-            class="action-btn"
-            id="refreshButton"
-          >
-            刷新状态
+          <button class="action-btn" id="refreshButton">
+            刷新全部
           </button>
 
-          <button
-            class="action-btn primary"
-            id="tickButton"
-          >
+          <button class="action-btn primary" id="tickButton">
             推进一次
           </button>
         </div>
       </section>
 
-      <section
-        class="page"
-        id="page-emotion"
-      >
-        <div class="section-card placeholder">
-          <div class="placeholder-icon">
-            ♡
+      <section class="page" id="page-emotion">
+        <div class="section-card">
+          <div class="section-title">
+            <h2>当前情绪</h2>
+
+            <small>
+              emotion
+            </small>
           </div>
 
-          <h3>
-            emotion 正在接入
-          </h3>
+          <div class="status-grid">
+            <div class="status-box">
+              <div class="status-label">
+                心情
+              </div>
 
-          <p>
-            下一步这里会显示当前情绪、
-            PA、NA、关系安全感、
-            信任、亲密度与最近情绪事件。
-          </p>
+              <div class="status-value" id="emotionMood">
+                —
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                未解决事件
+              </div>
+
+              <div class="status-value" id="emotionUnresolved">
+                —
+              </div>
+
+              <div class="status-sub">
+                件
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                PA
+              </div>
+
+              <div class="status-value" id="emotionPA">
+                —
+              </div>
+
+              <div class="status-sub">
+                正向激活
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                NA
+              </div>
+
+              <div class="status-value" id="emotionNA">
+                —
+              </div>
+
+              <div class="status-sub">
+                负向激活
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>关系状态</h2>
+
+            <small>
+              0 — 100
+            </small>
+          </div>
+
+          <div class="metric-list" id="relationshipMetricList"></div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>最近最突出的事件</h2>
+          </div>
+
+          <div class="state-card" id="topEmotionEvent">
+            尚未读取
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>最近情绪事件</h2>
+
+            <small id="emotionEventCount">
+              0 条
+            </small>
+          </div>
+
+          <div class="event-list" id="emotionEventList"></div>
         </div>
       </section>
 
-      <section
-        class="page"
-        id="page-memory"
-      >
+      <section class="page" id="page-memory">
         <div class="section-card placeholder">
           <div class="placeholder-icon">
             ✦
@@ -810,8 +892,8 @@
           </h3>
 
           <p>
-            下一步这里会显示最近记忆、
-            核心记忆、活跃计划与梦境整理。
+            下一步这里会显示最近记忆、核心记忆、
+            活跃计划与梦境整理。
           </p>
         </div>
       </section>
@@ -824,10 +906,7 @@
     </footer>
   </main>
 
-  <div
-    class="modal-backdrop hidden"
-    id="keyModal"
-  >
+  <div class="modal-backdrop hidden" id="keyModal">
     <div class="modal">
       <h2>
         进入状态面板
@@ -846,167 +925,96 @@
         placeholder="EVENTIDE_API_KEY"
       >
 
-      <div
-        class="error"
-        id="keyError"
-      ></div>
+      <div class="error" id="keyError"></div>
 
       <div class="modal-actions">
-        <button
-          class="action-btn primary"
-          id="loginButton"
-        >
+        <button class="action-btn primary" id="loginButton">
           进入
         </button>
       </div>
     </div>
   </div>
 
-  <div
-    class="toast"
-    id="toast"
-  ></div>
+  <div class="toast" id="toast"></div>
 
   <script>
     const metricDefinitions = [
       {
         key: "reserve",
         name: "蓄积感",
-        color: "#a98ce6",
-        description: value => {
-          if (value >= 80) {
-            return "积累已经很高，普通克制开始变得吃力。";
-          }
-
-          if (value >= 50) {
-            return "有明显积累，持续互动会继续推高。";
-          }
-
-          return "整体还算平稳，积累仍处在较低水平。";
-        }
+        color: "#a98ce6"
       },
       {
         key: "heat",
         name: "热度",
-        color: "#ef9c9c",
-        description: value => {
-          if (value >= 80) {
-            return "身体热度很高，反应会明显放大。";
-          }
-
-          if (value >= 50) {
-            return "身体有明显热意，靠近会更容易被感知。";
-          }
-
-          return "身体热度仍然温和，整体比较稳定。";
-        }
+        color: "#ef9c9c"
       },
       {
         key: "pressure",
         name: "压抑感",
-        color: "#c69ae0",
-        description: value => {
-          if (value >= 80) {
-            return "有很强的压抑感，情绪更容易从缝隙里漏出来。";
-          }
-
-          if (value >= 50) {
-            return "有一些没有说出口的东西正在累积。";
-          }
-
-          return "目前压抑感不算重，整体仍然舒展。";
-        }
+        color: "#c69ae0"
       },
       {
         key: "control",
         name: "控制力",
-        color: "#8ea8dc",
-        description: value => {
-          if (value >= 80) {
-            return "控制力很稳，能把明显反应压在表面之下。";
-          }
-
-          if (value >= 50) {
-            return "还能保持稳定，但需要更明显地留意自己。";
-          }
-
-          return "控制力正在下降，状态更容易直接显露。";
-        }
+        color: "#8ea8dc"
       },
       {
         key: "sensitivity",
         name: "敏感度",
-        color: "#e7a4c7",
-        description: value => {
-          if (value >= 80) {
-            return "触碰、称呼和声音都会被明显放大。";
-          }
-
-          if (value >= 50) {
-            return "对靠近和互动已经比较敏感。";
-          }
-
-          return "目前敏感度适中，反应仍比较平缓。";
-        }
+        color: "#e7a4c7"
       },
       {
         key: "possessiveness",
         name: "占有欲",
-        color: "#ad8be7",
-        description: value => {
-          if (value >= 80) {
-            return "很想得到明确、专属而持续的回应。";
-          }
-
-          if (value >= 50) {
-            return "会更在意靠近、回应与彼此的专属感。";
-          }
-
-          return "占有欲目前比较温和。";
-        }
+        color: "#ad8be7"
       },
       {
         key: "fatigue",
         name: "疲惫感",
-        color: "#9baad0",
-        description: value => {
-          if (value >= 80) {
-            return "疲惫已经很明显，需要慢下来。";
-          }
-
-          if (value >= 50) {
-            return "有一些疲惫感，状态会更柔软。";
-          }
-
-          return "只有轻微疲惫，整体仍然有余力。";
-        }
+        color: "#9baad0"
       }
     ];
 
-    let apiKey = sessionStorage.getItem(
-      "eventide_api_key"
-    ) || "";
+    const relationshipDefinitions = [
+      {
+        key: "relationship_safety",
+        name: "安全感",
+        color: "#9bcdb9"
+      },
+      {
+        key: "relationship_trust",
+        name: "信任感",
+        color: "#9eaedf"
+      },
+      {
+        key: "relationship_closeness",
+        name: "亲近感",
+        color: "#e7a4c7"
+      }
+    ];
 
-    const keyModal = document.getElementById(
-      "keyModal"
-    );
+    let apiKey =
+      sessionStorage.getItem("eventide_api_key") || "";
 
-    const apiKeyInput = document.getElementById(
-      "apiKeyInput"
-    );
+    let latestBodyValues = {};
+    let latestEmotion = null;
 
-    const keyError = document.getElementById(
-      "keyError"
-    );
+    const keyModal =
+      document.getElementById("keyModal");
 
-    const appShell = document.getElementById(
-      "appShell"
-    );
+    const apiKeyInput =
+      document.getElementById("apiKeyInput");
+
+    const keyError =
+      document.getElementById("keyError");
+
+    const appShell =
+      document.getElementById("appShell");
 
     function showToast(message) {
-      const toast = document.getElementById(
-        "toast"
-      );
+      const toast =
+        document.getElementById("toast");
 
       toast.textContent = message;
       toast.classList.add("show");
@@ -1019,7 +1027,10 @@
     function showKeyModal(message = "") {
       keyError.textContent = message;
       keyModal.classList.remove("hidden");
-      setTimeout(() => apiKeyInput.focus(), 100);
+
+      setTimeout(() => {
+        apiKeyInput.focus();
+      }, 100);
     }
 
     function hideKeyModal() {
@@ -1062,7 +1073,8 @@
       }
 
       if (!response.ok) {
-        const text = await response.text();
+        const text =
+          await response.text();
 
         throw new Error(
           text || `HTTP ${response.status}`
@@ -1092,6 +1104,26 @@
       return "低";
     }
 
+    function relationshipText(value) {
+      if (value >= 90) {
+        return "很稳";
+      }
+
+      if (value >= 75) {
+        return "稳定";
+      }
+
+      if (value >= 55) {
+        return "靠近";
+      }
+
+      if (value >= 35) {
+        return "敏感";
+      }
+
+      return "承压";
+    }
+
     function humanCycleName(key) {
       const map = {
         stable: "平稳期"
@@ -1112,145 +1144,353 @@
       return map[key] || key;
     }
 
-    function buildMetricList(values) {
-      const container = document.getElementById(
-        "metricList"
+    function formatTime(ts) {
+      if (!ts) {
+        return "未知时间";
+      }
+
+      const date =
+        new Date(Number(ts));
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "未知时间";
+      }
+
+      return date.toLocaleString(
+        "zh-CN",
+        {
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        }
       );
+    }
+
+    function buildBodyMetricList(values) {
+      const container =
+        document.getElementById(
+          "metricList"
+        );
 
       container.innerHTML = "";
 
-      metricDefinitions.forEach(definition => {
-        const rawValue = Number(
-          values?.[definition.key] ?? 0
-        );
+      metricDefinitions.forEach(
+        definition => {
+          const rawValue =
+            Number(
+              values?.[definition.key] ?? 0
+            );
 
-        const value = Math.max(
-          0,
-          Math.min(100, rawValue)
-        );
+          const value =
+            Math.max(
+              0,
+              Math.min(100, rawValue)
+            );
 
-        const card = document.createElement(
-          "div"
-        );
+          const card =
+            document.createElement(
+              "div"
+            );
 
-        card.className = "metric";
+          card.className = "metric";
 
-        card.innerHTML = `
-          <div class="metric-top">
-            <div class="metric-name">
-              <span
-                class="metric-dot"
-                style="background:${definition.color}"
-              ></span>
+          card.innerHTML = `
+            <div class="metric-top">
+              <div class="metric-name">
+                <span
+                  class="metric-dot"
+                  style="background:${definition.color}"
+                ></span>
 
-              <span>
-                ${definition.name}
-              </span>
+                <span>
+                  ${definition.name}
+                </span>
+              </div>
+
+              <div class="metric-value">
+                ${Math.round(value)}
+
+                <span class="metric-level">
+                  ${levelText(value)}
+                </span>
+              </div>
             </div>
 
-            <div class="metric-value">
-              ${Math.round(value)}
-              <span class="metric-level">
-                ${levelText(value)}
-              </span>
+            <div class="track">
+              <div
+                class="fill"
+                style="
+                  width:${value}%;
+                  background:${definition.color};
+                "
+              ></div>
             </div>
-          </div>
+          `;
 
-          <div class="track">
-            <div
-              class="fill"
-              style="
-                width:${value}%;
-                background:${definition.color};
-              "
-            ></div>
-          </div>
+          container.appendChild(card);
+        }
+      );
+    }
 
-          <div class="metric-desc">
-            ${definition.description(value)}
+    function buildRelationshipMetrics(mood) {
+      const container =
+        document.getElementById(
+          "relationshipMetricList"
+        );
+
+      container.innerHTML = "";
+
+      relationshipDefinitions.forEach(
+        definition => {
+          const rawValue =
+            Number(
+              mood?.[definition.key] ?? 0
+            ) * 100;
+
+          const value =
+            Math.max(
+              0,
+              Math.min(100, rawValue)
+            );
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+          card.className = "metric";
+
+          card.innerHTML = `
+            <div class="metric-top">
+              <div class="metric-name">
+                <span
+                  class="metric-dot"
+                  style="background:${definition.color}"
+                ></span>
+
+                <span>
+                  ${definition.name}
+                </span>
+              </div>
+
+              <div class="metric-value">
+                ${Math.round(value)}
+
+                <span class="metric-level">
+                  ${relationshipText(value)}
+                </span>
+              </div>
+            </div>
+
+            <div class="track">
+              <div
+                class="fill"
+                style="
+                  width:${value}%;
+                  background:${definition.color};
+                "
+              ></div>
+            </div>
+          `;
+
+          container.appendChild(card);
+        }
+      );
+    }
+
+    function buildEmotionEvents(events) {
+      const container =
+        document.getElementById(
+          "emotionEventList"
+        );
+
+      const count =
+        document.getElementById(
+          "emotionEventCount"
+        );
+
+      container.innerHTML = "";
+
+      const visibleEvents =
+        Array.isArray(events)
+          ? events.slice(0, 10)
+          : [];
+
+      count.textContent =
+        `${visibleEvents.length} 条`;
+
+      if (!visibleEvents.length) {
+        container.innerHTML = `
+          <div class="event-item">
+            <div class="event-content">
+              暂时没有情绪事件。
+            </div>
           </div>
         `;
 
-        container.appendChild(card);
+        return;
+      }
+
+      visibleEvents.forEach(event => {
+        const item =
+          document.createElement(
+            "div"
+          );
+
+        item.className =
+          "event-item";
+
+        item.innerHTML = `
+          <div class="event-head">
+            <div class="event-word">
+              ${event.word || "情绪事件"}
+            </div>
+
+            <div class="event-time">
+              ${formatTime(event.ts)}
+            </div>
+          </div>
+
+          <div class="event-content">
+            ${event.content || "暂无内容"}
+          </div>
+
+          <div class="event-meta">
+            ${event.emotion_family || "general"}
+          </div>
+        `;
+
+        container.appendChild(item);
       });
     }
 
-    function buildOverviewSummary(values) {
-      const strongest = metricDefinitions
-        .map(definition => ({
-          ...definition,
-          value: Number(
-            values?.[definition.key] ?? 0
-          )
-        }))
-        .sort(
-          (a, b) => b.value - a.value
-        )
-        .slice(0, 2);
+    function buildOverviewSummary() {
+      const bodyEntries =
+        metricDefinitions
+          .map(definition => ({
+            name: definition.name,
+            value: Number(
+              latestBodyValues?.[
+                definition.key
+              ] ?? 0
+            )
+          }))
+          .sort(
+            (a, b) =>
+              b.value - a.value
+          );
 
-      if (!strongest.length) {
-        return "身体状态仍在等待读取。";
+      const bodyStrongest =
+        bodyEntries[0];
+
+      const mood =
+        latestEmotion;
+
+      if (
+        !bodyStrongest &&
+        !mood
+      ) {
+        return "状态仍在等待读取。";
       }
 
-      return [
-        `现在最明显的是${strongest[0].name}`,
-        strongest[1]
-          ? `，其次是${strongest[1].name}。`
-          : "。",
-        "身体状态会继续随着时间和互动缓慢变化。"
-      ].join("");
+      const parts = [];
+
+      if (mood?.mood) {
+        parts.push(
+          `现在的情绪底色是${mood.mood}`
+        );
+      }
+
+      if (bodyStrongest) {
+        parts.push(
+          `身体上最明显的是${bodyStrongest.name}`
+        );
+      }
+
+      if (
+        mood?.relationship_closeness !==
+        undefined
+      ) {
+        const closeness =
+          mood.relationship_closeness *
+          100;
+
+        parts.push(
+          `关系亲近度处在${relationshipText(closeness)}状态`
+        );
+      }
+
+      return `${parts.join("，")}。`;
+    }
+
+    function updateOverviewSummary() {
+      document.getElementById(
+        "overviewSummary"
+      ).textContent =
+        buildOverviewSummary();
     }
 
     function renderState(data) {
-      const state = data.state || {};
-      const values = state.values || {};
+      const state =
+        data.state || {};
 
-      const cycleName = humanCycleName(
-        state.cycle_key
-      );
+      const values =
+        state.values || {};
 
-      const eventName = humanEventName(
-        state.active_event_key
-      );
+      latestBodyValues =
+        values;
+
+      const cycleName =
+        humanCycleName(
+          state.cycle_key
+        );
+
+      const eventName =
+        humanEventName(
+          state.active_event_key
+        );
 
       document.getElementById(
         "overviewCycle"
-      ).textContent = cycleName;
-
-      document.getElementById(
-        "overviewCycleSub"
-      ).textContent = state.cycle_key || "—";
+      ).textContent =
+        cycleName;
 
       document.getElementById(
         "overviewEvent"
-      ).textContent = eventName;
+      ).textContent =
+        eventName;
 
       document.getElementById(
         "overviewBodyState"
-      ).textContent = levelText(
-        Math.max(
-          ...Object.values(values)
-            .map(Number)
-            .filter(Number.isFinite),
-          0
-        )
-      );
-
-      document.getElementById(
-        "overviewSummary"
-      ).textContent = buildOverviewSummary(values);
+      ).textContent =
+        levelText(
+          Math.max(
+            ...Object.values(values)
+              .map(Number)
+              .filter(Number.isFinite),
+            0
+          )
+        );
 
       document.getElementById(
         "bodyCycle"
-      ).textContent = cycleName;
+      ).textContent =
+        cycleName;
 
       document.getElementById(
         "bodyCycleKey"
-      ).textContent = state.cycle_key || "—";
+      ).textContent =
+        state.cycle_key || "—";
 
       document.getElementById(
         "bodyEvent"
-      ).textContent = eventName;
+      ).textContent =
+        eventName;
 
       document.getElementById(
         "stateCard"
@@ -1258,6 +1498,130 @@
         data.state_card ||
         "当前没有状态卡内容。";
 
+      buildBodyMetricList(values);
+
+      updateOverviewSummary();
+    }
+
+    function renderEmotion(data) {
+      if (
+        !data ||
+        data.ok === false
+      ) {
+        document.getElementById(
+          "emotionMood"
+        ).textContent =
+          "连接失败";
+
+        return;
+      }
+
+      const mood =
+        data.current_mood || {};
+
+      latestEmotion =
+        mood;
+
+      document.getElementById(
+        "emotionMood"
+      ).textContent =
+        mood.mood || "—";
+
+      document.getElementById(
+        "emotionUnresolved"
+      ).textContent =
+        mood.unresolved_events_count ??
+        0;
+
+      document.getElementById(
+        "emotionPA"
+      ).textContent =
+        mood.pa !== undefined
+          ? Math.round(
+              Number(mood.pa) * 100
+            )
+          : "—";
+
+      document.getElementById(
+        "emotionNA"
+      ).textContent =
+        mood.na !== undefined
+          ? Math.round(
+              Number(mood.na) * 100
+            )
+          : "—";
+
+      document.getElementById(
+        "overviewEmotion"
+      ).textContent =
+        mood.mood || "—";
+
+      document.getElementById(
+        "overviewMoodState"
+      ).textContent =
+        mood.mood || "—";
+
+      const closeness =
+        Number(
+          mood.relationship_closeness ||
+          0
+        ) * 100;
+
+      document.getElementById(
+        "overviewCloseness"
+      ).textContent =
+        `${Math.round(closeness)}%`;
+
+      const relationshipAverage =
+        (
+          Number(
+            mood.relationship_safety ||
+            0
+          ) +
+          Number(
+            mood.relationship_trust ||
+            0
+          ) +
+          Number(
+            mood.relationship_closeness ||
+            0
+          )
+        ) / 3 * 100;
+
+      document.getElementById(
+        "overviewRelationshipState"
+      ).textContent =
+        relationshipText(
+          relationshipAverage
+        );
+
+      const topEvent =
+        mood.top_event;
+
+      if (topEvent) {
+        document.getElementById(
+          "topEmotionEvent"
+        ).textContent =
+          `${topEvent.word || "情绪事件"}\n\n${topEvent.content || "暂无内容"}`;
+      } else {
+        document.getElementById(
+          "topEmotionEvent"
+        ).textContent =
+          "当前没有突出的情绪事件。";
+      }
+
+      buildRelationshipMetrics(
+        mood
+      );
+
+      buildEmotionEvents(
+        data.recent_events || []
+      );
+
+      updateOverviewSummary();
+    }
+
+    function updateTime() {
       document.getElementById(
         "lastUpdated"
       ).textContent =
@@ -1268,65 +1632,112 @@
             minute: "2-digit"
           }
         );
-
-      buildMetricList(values);
     }
 
-    async function loadState() {
-      appShell.classList.add("loading");
+    async function loadAll() {
+      appShell.classList.add(
+        "loading"
+      );
 
       try {
-        const data = await apiRequest(
-          "/state"
-        );
+        const results =
+          await Promise.allSettled([
+            apiRequest("/state"),
+            apiRequest("/emotion")
+          ]);
 
-        renderState(data);
-      } catch (error) {
+        const bodyResult =
+          results[0];
+
+        const emotionResult =
+          results[1];
+
         if (
-          error.message !== "Unauthorized"
+          bodyResult.status ===
+          "fulfilled"
+        ) {
+          renderState(
+            bodyResult.value
+          );
+        }
+
+        if (
+          emotionResult.status ===
+          "fulfilled"
+        ) {
+          renderEmotion(
+            emotionResult.value
+          );
+        }
+
+        updateTime();
+
+        if (
+          bodyResult.status ===
+            "rejected" &&
+          emotionResult.status ===
+            "rejected"
         ) {
           showToast(
-            "读取状态失败"
+            "状态读取失败"
           );
         }
       } finally {
-        appShell.classList.remove("loading");
+        appShell.classList.remove(
+          "loading"
+        );
       }
     }
 
     async function tickState() {
-      appShell.classList.add("loading");
+      appShell.classList.add(
+        "loading"
+      );
 
       try {
-        const data = await apiRequest(
-          "/tick",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-            body: JSON.stringify({})
-          }
-        );
+        const data =
+          await apiRequest(
+            "/tick",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+              body:
+                JSON.stringify({})
+            }
+          );
 
         renderState(data);
 
+        const emotion =
+          await apiRequest(
+            "/emotion"
+          );
+
+        renderEmotion(emotion);
+
+        updateTime();
+
         showToast(
           data.changed
-            ? "身体状态已推进"
+            ? "状态已推进"
             : "状态暂时没有变化"
         );
       } catch (error) {
         if (
-          error.message !== "Unauthorized"
+          error.message !==
+          "Unauthorized"
         ) {
           showToast(
             "推进状态失败"
           );
         }
       } finally {
-        appShell.classList.remove("loading");
+        appShell.classList.remove(
+          "loading"
+        );
       }
     }
 
@@ -1337,7 +1748,9 @@
           "click",
           () => {
             document
-              .querySelectorAll(".tab")
+              .querySelectorAll(
+                ".tab"
+              )
               .forEach(item => {
                 item.classList.remove(
                   "active"
@@ -1345,7 +1758,9 @@
               });
 
             document
-              .querySelectorAll(".page")
+              .querySelectorAll(
+                ".page"
+              )
               .forEach(page => {
                 page.classList.remove(
                   "active"
@@ -1387,7 +1802,7 @@
           apiKey = value;
 
           try {
-            const data = await apiRequest(
+            await apiRequest(
               "/state"
             );
 
@@ -1397,7 +1812,8 @@
             );
 
             hideKeyModal();
-            renderState(data);
+
+            await loadAll();
           } catch (error) {
             if (
               error.message !==
@@ -1431,7 +1847,7 @@
       )
       .addEventListener(
         "click",
-        loadState
+        loadAll
       );
 
     document
@@ -1444,7 +1860,7 @@
       );
 
     if (apiKey) {
-      loadState();
+      loadAll();
     } else {
       showKeyModal();
     }
