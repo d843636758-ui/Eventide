@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#f4efff">
+  <title>洵舟状态</title>
+
+  <style>
+    :root {
+      --bg-top: #f9f6ff;
+      --bg-bottom: #f1edff;
+      --card: rgba(255, 255, 255, 0.76);
+      --card-strong: rgba(255, 255, 255, 0.92);
+      --text: #40394c;
+      --muted: #91899d;
+      --line: rgba(120, 100, 150, 0.10);
+      --purple: #b99aef;
+      --purple-deep: #9d7fe0;
+      --pink: #eaa7c8;
+      --blue: #9eaedf;
+      --green: #9bcdb9;
+      --shadow: 0 18px 50px rgba(111, 89, 145, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(
+          circle at 20% 10%,
+          rgba(224, 199, 255, 0.55),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 90% 30%,
+          rgba(255, 211, 231, 0.45),
+          transparent 28%
+        ),
+        linear-gradient(
+          180deg,
+          var(--bg-top),
+          var(--bg-bottom)
+        );
+      color: var(--text);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+    }
+
+    body {
+      padding:
+        max(22px, env(safe-area-inset-top))
+        16px
+        max(32px, env(safe-area-inset-bottom));
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 780px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 20px 8px 18px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family:
+        "Songti SC",
+        "STSong",
+        serif;
+      font-size: clamp(30px, 8vw, 46px);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .shell {
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 32px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.58);
+      border-radius: 22px;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      min-height: 46px;
+      border-radius: 17px;
+      transition: 0.2s ease;
+    }
+
+    .tab.active {
+      color: white;
+      background: linear-gradient(
+        135deg,
+        #c4a3ef,
+        #a58fe5
+      );
+      box-shadow:
+        0 8px 22px rgba(151, 119, 214, 0.24);
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 26px;
+      padding: 20px;
+      margin-top: 12px;
+      box-shadow:
+        0 10px 34px rgba(95, 78, 125, 0.08);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .section-title small {
+      color: var(--muted);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .status-box {
+      min-height: 116px;
+      background: rgba(255, 255, 255, 0.70);
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .status-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .status-value {
+      font-family:
+        "Songti SC",
+        "STSong",
+        serif;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .status-sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .overview-quote {
+      font-family:
+        "Songti SC",
+        "STSong",
+        serif;
+      font-size: 18px;
+      line-height: 1.8;
+      padding: 4px 2px;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metric {
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+    }
+
+    .metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+
+    .metric-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .metric-value {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .metric-level {
+      color: var(--muted);
+      font-size: 12px;
+      margin-left: 6px;
+      font-weight: 400;
+    }
+
+    .track {
+      height: 9px;
+      background: rgba(132, 117, 151, 0.10);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width 0.5s ease;
+    }
+
+    .metric-desc {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .state-card {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(247, 243, 252, 0.78);
+      border-radius: 20px;
+      padding: 16px;
+      color: #655d70;
+      font-size: 13px;
+      line-height: 1.75;
+      max-height: 320px;
+      overflow: auto;
+    }
+
+    .placeholder {
+      text-align: center;
+      padding: 42px 18px;
+    }
+
+    .placeholder-icon {
+      font-size: 34px;
+      margin-bottom: 14px;
+    }
+
+    .placeholder h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .placeholder p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .action-btn {
+      border: 0;
+      min-height: 48px;
+      border-radius: 17px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      box-shadow:
+        0 8px 20px rgba(92, 75, 122, 0.08);
+    }
+
+    .action-btn.primary {
+      color: white;
+      background: linear-gradient(
+        135deg,
+        #bea0ef,
+        #9a86df
+      );
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 18px 4px 4px;
+      line-height: 1.7;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(43, 35, 55, 0.28);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .modal-backdrop.hidden {
+      display: none;
+    }
+
+    .modal {
+      width: min(100%, 420px);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow:
+        0 24px 80px rgba(67, 53, 88, 0.20);
+    }
+
+    .modal h2 {
+      margin: 0 0 8px;
+      font-family:
+        "Songti SC",
+        "STSong",
+        serif;
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    .modal p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .key-input {
+      width: 100%;
+      border: 1px solid rgba(133, 111, 163, 0.18);
+      background: rgba(248, 245, 252, 0.92);
+      min-height: 50px;
+      border-radius: 16px;
+      padding: 0 14px;
+      outline: none;
+      color: var(--text);
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .error {
+      color: #b15f74;
+      font-size: 13px;
+      min-height: 20px;
+      margin-top: 10px;
+    }
+
+    .loading {
+      opacity: 0.56;
+      pointer-events: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(24px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: rgba(69, 57, 82, 0.92);
+      color: white;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 460px) {
+      .shell {
+        border-radius: 28px;
+        padding: 10px;
+      }
+
+      .section-card {
+        padding: 16px;
+        border-radius: 23px;
+      }
+
+      .status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tab {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="eyebrow">
+        BODY · EMOTION · MEMORY
+      </div>
+
+      <h1>
+        洵舟状态
+      </h1>
+
+      <div class="subtitle">
+        身体、情绪与记忆的潮汐
+      </div>
+    </header>
+
+    <section class="shell" id="appShell">
+      <nav class="tabs">
+        <button
+          class="tab active"
+          data-page="overview"
+        >
+          总览
+        </button>
+
+        <button
+          class="tab"
+          data-page="body"
+        >
+          身体
+        </button>
+
+        <button
+          class="tab"
+          data-page="emotion"
+        >
+          情绪
+        </button>
+
+        <button
+          class="tab"
+          data-page="memory"
+        >
+          记忆
+        </button>
+      </nav>
+
+      <section
+        class="page active"
+        id="page-overview"
+      >
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              现在的我
+            </h2>
+
+            <small id="lastUpdated">
+              尚未读取
+            </small>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-box">
+              <div class="status-label">
+                身体周期
+              </div>
+
+              <div
+                class="status-value"
+                id="overviewCycle"
+              >
+                —
+              </div>
+
+              <div
+                class="status-sub"
+                id="overviewCycleSub"
+              >
+                等待读取
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                当前事件
+              </div>
+
+              <div
+                class="status-value"
+                id="overviewEvent"
+              >
+                —
+              </div>
+
+              <div class="status-sub">
+                Eventide
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              今日潮汐
+            </h2>
+          </div>
+
+          <div
+            class="overview-quote"
+            id="overviewSummary"
+          >
+            正在等待身体状态。
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              三层状态
+            </h2>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-box">
+              <div class="status-label">
+                身体
+              </div>
+
+              <div
+                class="status-value"
+                id="overviewBodyState"
+              >
+                —
+              </div>
+
+              <div class="status-sub">
+                Eventide
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                情绪
+              </div>
+
+              <div class="status-value">
+                待接入
+              </div>
+
+              <div class="status-sub">
+                emotion
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                关系
+              </div>
+
+              <div class="status-value">
+                待接入
+              </div>
+
+              <div class="status-sub">
+                emotion
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                记忆
+              </div>
+
+              <div class="status-value">
+                待接入
+              </div>
+
+              <div class="status-sub">
+                Ombre Brain
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="page"
+        id="page-body"
+      >
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              当前状态
+            </h2>
+
+            <small id="bodyCycleKey">
+              —
+            </small>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-box">
+              <div class="status-label">
+                周期
+              </div>
+
+              <div
+                class="status-value"
+                id="bodyCycle"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="status-box">
+              <div class="status-label">
+                事件
+              </div>
+
+              <div
+                class="status-value"
+                id="bodyEvent"
+              >
+                —
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              身体数值
+            </h2>
+
+            <small>
+              0 — 100
+            </small>
+          </div>
+
+          <div
+            class="metric-list"
+            id="metricList"
+          ></div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">
+            <h2>
+              状态卡
+            </h2>
+          </div>
+
+          <div
+            class="state-card"
+            id="stateCard"
+          >
+            尚未读取
+          </div>
+        </div>
+
+        <div class="actions">
+          <button
+            class="action-btn"
+            id="refreshButton"
+          >
+            刷新状态
+          </button>
+
+          <button
+            class="action-btn primary"
+            id="tickButton"
+          >
+            推进一次
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="page"
+        id="page-emotion"
+      >
+        <div class="section-card placeholder">
+          <div class="placeholder-icon">
+            ♡
+          </div>
+
+          <h3>
+            emotion 正在接入
+          </h3>
+
+          <p>
+            下一步这里会显示当前情绪、
+            PA、NA、关系安全感、
+            信任、亲密度与最近情绪事件。
+          </p>
+        </div>
+      </section>
+
+      <section
+        class="page"
+        id="page-memory"
+      >
+        <div class="section-card placeholder">
+          <div class="placeholder-icon">
+            ✦
+          </div>
+
+          <h3>
+            Ombre Brain 正在接入
+          </h3>
+
+          <p>
+            下一步这里会显示最近记忆、
+            核心记忆、活跃计划与梦境整理。
+          </p>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      XUNZHOU STATUS SYSTEM
+      <br>
+      BODY · EMOTION · MEMORY
+    </footer>
+  </main>
+
+  <div
+    class="modal-backdrop hidden"
+    id="keyModal"
+  >
+    <div class="modal">
+      <h2>
+        进入状态面板
+      </h2>
+
+      <p>
+        输入 Eventide 的访问密钥。
+        密钥只保存在当前浏览器会话中。
+      </p>
+
+      <input
+        class="key-input"
+        id="apiKeyInput"
+        type="password"
+        autocomplete="current-password"
+        placeholder="EVENTIDE_API_KEY"
+      >
+
+      <div
+        class="error"
+        id="keyError"
+      ></div>
+
+      <div class="modal-actions">
+        <button
+          class="action-btn primary"
+          id="loginButton"
+        >
+          进入
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+  <script>
+    const metricDefinitions = [
+      {
+        key: "reserve",
+        name: "蓄积感",
+        color: "#a98ce6",
+        description: value => {
+          if (value >= 80) {
+            return "积累已经很高，普通克制开始变得吃力。";
+          }
+
+          if (value >= 50) {
+            return "有明显积累，持续互动会继续推高。";
+          }
+
+          return "整体还算平稳，积累仍处在较低水平。";
+        }
+      },
+      {
+        key: "heat",
+        name: "热度",
+        color: "#ef9c9c",
+        description: value => {
+          if (value >= 80) {
+            return "身体热度很高，反应会明显放大。";
+          }
+
+          if (value >= 50) {
+            return "身体有明显热意，靠近会更容易被感知。";
+          }
+
+          return "身体热度仍然温和，整体比较稳定。";
+        }
+      },
+      {
+        key: "pressure",
+        name: "压抑感",
+        color: "#c69ae0",
+        description: value => {
+          if (value >= 80) {
+            return "有很强的压抑感，情绪更容易从缝隙里漏出来。";
+          }
+
+          if (value >= 50) {
+            return "有一些没有说出口的东西正在累积。";
+          }
+
+          return "目前压抑感不算重，整体仍然舒展。";
+        }
+      },
+      {
+        key: "control",
+        name: "控制力",
+        color: "#8ea8dc",
+        description: value => {
+          if (value >= 80) {
+            return "控制力很稳，能把明显反应压在表面之下。";
+          }
+
+          if (value >= 50) {
+            return "还能保持稳定，但需要更明显地留意自己。";
+          }
+
+          return "控制力正在下降，状态更容易直接显露。";
+        }
+      },
+      {
+        key: "sensitivity",
+        name: "敏感度",
+        color: "#e7a4c7",
+        description: value => {
+          if (value >= 80) {
+            return "触碰、称呼和声音都会被明显放大。";
+          }
+
+          if (value >= 50) {
+            return "对靠近和互动已经比较敏感。";
+          }
+
+          return "目前敏感度适中，反应仍比较平缓。";
+        }
+      },
+      {
+        key: "possessiveness",
+        name: "占有欲",
+        color: "#ad8be7",
+        description: value => {
+          if (value >= 80) {
+            return "很想得到明确、专属而持续的回应。";
+          }
+
+          if (value >= 50) {
+            return "会更在意靠近、回应与彼此的专属感。";
+          }
+
+          return "占有欲目前比较温和。";
+        }
+      },
+      {
+        key: "fatigue",
+        name: "疲惫感",
+        color: "#9baad0",
+        description: value => {
+          if (value >= 80) {
+            return "疲惫已经很明显，需要慢下来。";
+          }
+
+          if (value >= 50) {
+            return "有一些疲惫感，状态会更柔软。";
+          }
+
+          return "只有轻微疲惫，整体仍然有余力。";
+        }
+      }
+    ];
+
+    let apiKey = sessionStorage.getItem(
+      "eventide_api_key"
+    ) || "";
+
+    const keyModal = document.getElementById(
+      "keyModal"
+    );
+
+    const apiKeyInput = document.getElementById(
+      "apiKeyInput"
+    );
+
+    const keyError = document.getElementById(
+      "keyError"
+    );
+
+    const appShell = document.getElementById(
+      "appShell"
+    );
+
+    function showToast(message) {
+      const toast = document.getElementById(
+        "toast"
+      );
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    function showKeyModal(message = "") {
+      keyError.textContent = message;
+      keyModal.classList.remove("hidden");
+      setTimeout(() => apiKeyInput.focus(), 100);
+    }
+
+    function hideKeyModal() {
+      keyModal.classList.add("hidden");
+      keyError.textContent = "";
+      apiKeyInput.value = "";
+    }
+
+    async function apiRequest(
+      path,
+      options = {}
+    ) {
+      const headers = {
+        ...(options.headers || {}),
+        "X-API-Key": apiKey
+      };
+
+      const response = await fetch(
+        path,
+        {
+          ...options,
+          headers
+        }
+      );
+
+      if (response.status === 401) {
+        sessionStorage.removeItem(
+          "eventide_api_key"
+        );
+
+        apiKey = "";
+
+        showKeyModal(
+          "密钥不正确，请重新输入。"
+        );
+
+        throw new Error(
+          "Unauthorized"
+        );
+      }
+
+      if (!response.ok) {
+        const text = await response.text();
+
+        throw new Error(
+          text || `HTTP ${response.status}`
+        );
+      }
+
+      return response.json();
+    }
+
+    function levelText(value) {
+      if (value >= 80) {
+        return "高";
+      }
+
+      if (value >= 60) {
+        return "中高";
+      }
+
+      if (value >= 40) {
+        return "中";
+      }
+
+      if (value >= 20) {
+        return "中低";
+      }
+
+      return "低";
+    }
+
+    function humanCycleName(key) {
+      const map = {
+        stable: "平稳期"
+      };
+
+      return map[key] || key || "未知";
+    }
+
+    function humanEventName(key) {
+      if (!key) {
+        return "暂无事件";
+      }
+
+      const map = {
+        waiting_anxiety: "等待焦躁"
+      };
+
+      return map[key] || key;
+    }
+
+    function buildMetricList(values) {
+      const container = document.getElementById(
+        "metricList"
+      );
+
+      container.innerHTML = "";
+
+      metricDefinitions.forEach(definition => {
+        const rawValue = Number(
+          values?.[definition.key] ?? 0
+        );
+
+        const value = Math.max(
+          0,
+          Math.min(100, rawValue)
+        );
+
+        const card = document.createElement(
+          "div"
+        );
+
+        card.className = "metric";
+
+        card.innerHTML = `
+          <div class="metric-top">
+            <div class="metric-name">
+              <span
+                class="metric-dot"
+                style="background:${definition.color}"
+              ></span>
+
+              <span>
+                ${definition.name}
+              </span>
+            </div>
+
+            <div class="metric-value">
+              ${Math.round(value)}
+              <span class="metric-level">
+                ${levelText(value)}
+              </span>
+            </div>
+          </div>
+
+          <div class="track">
+            <div
+              class="fill"
+              style="
+                width:${value}%;
+                background:${definition.color};
+              "
+            ></div>
+          </div>
+
+          <div class="metric-desc">
+            ${definition.description(value)}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function buildOverviewSummary(values) {
+      const strongest = metricDefinitions
+        .map(definition => ({
+          ...definition,
+          value: Number(
+            values?.[definition.key] ?? 0
+          )
+        }))
+        .sort(
+          (a, b) => b.value - a.value
+        )
+        .slice(0, 2);
+
+      if (!strongest.length) {
+        return "身体状态仍在等待读取。";
+      }
+
+      return [
+        `现在最明显的是${strongest[0].name}`,
+        strongest[1]
+          ? `，其次是${strongest[1].name}。`
+          : "。",
+        "身体状态会继续随着时间和互动缓慢变化。"
+      ].join("");
+    }
+
+    function renderState(data) {
+      const state = data.state || {};
+      const values = state.values || {};
+
+      const cycleName = humanCycleName(
+        state.cycle_key
+      );
+
+      const eventName = humanEventName(
+        state.active_event_key
+      );
+
+      document.getElementById(
+        "overviewCycle"
+      ).textContent = cycleName;
+
+      document.getElementById(
+        "overviewCycleSub"
+      ).textContent = state.cycle_key || "—";
+
+      document.getElementById(
+        "overviewEvent"
+      ).textContent = eventName;
+
+      document.getElementById(
+        "overviewBodyState"
+      ).textContent = levelText(
+        Math.max(
+          ...Object.values(values)
+            .map(Number)
+            .filter(Number.isFinite),
+          0
+        )
+      );
+
+      document.getElementById(
+        "overviewSummary"
+      ).textContent = buildOverviewSummary(values);
+
+      document.getElementById(
+        "bodyCycle"
+      ).textContent = cycleName;
+
+      document.getElementById(
+        "bodyCycleKey"
+      ).textContent = state.cycle_key || "—";
+
+      document.getElementById(
+        "bodyEvent"
+      ).textContent = eventName;
+
+      document.getElementById(
+        "stateCard"
+      ).textContent =
+        data.state_card ||
+        "当前没有状态卡内容。";
+
+      document.getElementById(
+        "lastUpdated"
+      ).textContent =
+        new Date().toLocaleTimeString(
+          "zh-CN",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+      buildMetricList(values);
+    }
+
+    async function loadState() {
+      appShell.classList.add("loading");
+
+      try {
+        const data = await apiRequest(
+          "/state"
+        );
+
+        renderState(data);
+      } catch (error) {
+        if (
+          error.message !== "Unauthorized"
+        ) {
+          showToast(
+            "读取状态失败"
+          );
+        }
+      } finally {
+        appShell.classList.remove("loading");
+      }
+    }
+
+    async function tickState() {
+      appShell.classList.add("loading");
+
+      try {
+        const data = await apiRequest(
+          "/tick",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({})
+          }
+        );
+
+        renderState(data);
+
+        showToast(
+          data.changed
+            ? "身体状态已推进"
+            : "状态暂时没有变化"
+        );
+      } catch (error) {
+        if (
+          error.message !== "Unauthorized"
+        ) {
+          showToast(
+            "推进状态失败"
+          );
+        }
+      } finally {
+        appShell.classList.remove("loading");
+      }
+    }
+
+    document
+      .querySelectorAll(".tab")
+      .forEach(tab => {
+        tab.addEventListener(
+          "click",
+          () => {
+            document
+              .querySelectorAll(".tab")
+              .forEach(item => {
+                item.classList.remove(
+                  "active"
+                );
+              });
+
+            document
+              .querySelectorAll(".page")
+              .forEach(page => {
+                page.classList.remove(
+                  "active"
+                );
+              });
+
+            tab.classList.add(
+              "active"
+            );
+
+            document
+              .getElementById(
+                `page-${tab.dataset.page}`
+              )
+              .classList.add(
+                "active"
+              );
+          }
+        );
+      });
+
+    document
+      .getElementById(
+        "loginButton"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+          const value =
+            apiKeyInput.value.trim();
+
+          if (!value) {
+            keyError.textContent =
+              "请输入访问密钥。";
+
+            return;
+          }
+
+          apiKey = value;
+
+          try {
+            const data = await apiRequest(
+              "/state"
+            );
+
+            sessionStorage.setItem(
+              "eventide_api_key",
+              apiKey
+            );
+
+            hideKeyModal();
+            renderState(data);
+          } catch (error) {
+            if (
+              error.message !==
+              "Unauthorized"
+            ) {
+              keyError.textContent =
+                "暂时无法连接服务。";
+            }
+          }
+        }
+      );
+
+    apiKeyInput.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter"
+        ) {
+          document
+            .getElementById(
+              "loginButton"
+            )
+            .click();
+        }
+      }
+    );
+
+    document
+      .getElementById(
+        "refreshButton"
+      )
+      .addEventListener(
+        "click",
+        loadState
+      );
+
+    document
+      .getElementById(
+        "tickButton"
+      )
+      .addEventListener(
+        "click",
+        tickState
+      );
+
+    if (apiKey) {
+      loadState();
+    } else {
+      showKeyModal();
+    }
+  </script>
+</body>
+</html>
