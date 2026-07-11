@@ -1,10 +1,16 @@
 import os
 import secrets
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import (
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+)
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -13,6 +19,7 @@ from integrations import (
     get_emotion_dashboard,
     get_ombre_dashboard,
 )
+from mcp_server import mcp
 from storage import (
     get_state_file_path,
     load_state,
@@ -20,26 +27,69 @@ from storage import (
 )
 
 
-app = FastAPI(
-    title="Eventide Service",
-    version="0.4.0",
-    description="Eventide 身体、情绪与记忆统一状态服务",
-)
-
 runtime = EventideRuntime()
+
 
 API_KEY = os.getenv(
     "EVENTIDE_API_KEY",
     "",
 ).strip()
 
+
+MCP_PATH_TOKEN = os.getenv(
+    "EVENTIDE_MCP_PATH_TOKEN",
+    "",
+).strip()
+
+
+MCP_MOUNT_PATH = (
+    f"/mcp/{MCP_PATH_TOKEN}"
+    if MCP_PATH_TOKEN
+    else None
+)
+
+
 BASE_DIR = Path(
     __file__
 ).resolve().parent
 
+
 DASHBOARD_FILE = (
     BASE_DIR / "dashboard.html"
 )
+
+
+@asynccontextmanager
+async def lifespan(
+    _: FastAPI,
+):
+    if MCP_PATH_TOKEN:
+        async with (
+            mcp.session_manager.run()
+        ):
+            yield
+
+        return
+
+    yield
+
+
+app = FastAPI(
+    title="Eventide Service",
+    version="0.5.0",
+    description=(
+        "Eventide 身体、情绪、"
+        "记忆与 MCP 统一状态服务"
+    ),
+    lifespan=lifespan,
+)
+
+
+if MCP_MOUNT_PATH:
+    app.mount(
+        MCP_MOUNT_PATH,
+        mcp.streamable_http_app(),
+    )
 
 
 class TickRequest(BaseModel):
@@ -108,6 +158,9 @@ def root() -> dict:
         ),
         "dashboard": "/dashboard",
         "docs": "/docs",
+        "mcp_enabled": bool(
+            MCP_PATH_TOKEN
+        ),
     }
 
 
@@ -142,6 +195,9 @@ def health() -> dict:
         ),
         "emotion_integration": True,
         "memory_integration": True,
+        "mcp_enabled": bool(
+            MCP_PATH_TOKEN
+        ),
         "time": utc_now().isoformat(),
     }
 
