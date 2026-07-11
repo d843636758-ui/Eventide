@@ -9,30 +9,49 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from eventide import EventideRuntime
-from integrations import get_emotion_dashboard
-from storage import get_state_file_path, load_state, save_state
+from integrations import (
+    get_emotion_dashboard,
+    get_ombre_dashboard,
+)
+from storage import (
+    get_state_file_path,
+    load_state,
+    save_state,
+)
 
 
 app = FastAPI(
     title="Eventide Service",
-    version="0.3.0",
-    description="Eventide 身体状态与统一状态面板服务",
+    version="0.4.0",
+    description="Eventide 身体、情绪与记忆统一状态服务",
 )
 
 runtime = EventideRuntime()
 
-API_KEY = os.getenv("EVENTIDE_API_KEY", "").strip()
+API_KEY = os.getenv(
+    "EVENTIDE_API_KEY",
+    "",
+).strip()
 
-BASE_DIR = Path(__file__).resolve().parent
-DASHBOARD_FILE = BASE_DIR / "dashboard.html"
+BASE_DIR = Path(
+    __file__
+).resolve().parent
+
+DASHBOARD_FILE = (
+    BASE_DIR / "dashboard.html"
+)
 
 
 class TickRequest(BaseModel):
-    last_counterpart_message_at: Optional[datetime] = None
+    last_counterpart_message_at: Optional[
+        datetime
+    ] = None
 
 
 def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(
+        timezone.utc
+    )
 
 
 def normalize_datetime(
@@ -60,7 +79,10 @@ def require_api_key(
     if not API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="EVENTIDE_API_KEY 尚未配置",
+            detail=(
+                "EVENTIDE_API_KEY "
+                "尚未配置"
+            ),
         )
 
     if not secrets.compare_digest(
@@ -80,7 +102,10 @@ def root() -> dict:
     return {
         "ok": True,
         "service": "eventide",
-        "message": "Eventide service is running",
+        "message": (
+            "Eventide service "
+            "is running"
+        ),
         "dashboard": "/dashboard",
         "docs": "/docs",
     }
@@ -91,7 +116,10 @@ def dashboard():
     if not DASHBOARD_FILE.exists():
         raise HTTPException(
             status_code=404,
-            detail="dashboard.html 不存在",
+            detail=(
+                "dashboard.html "
+                "不存在"
+            ),
         )
 
     return FileResponse(
@@ -106,9 +134,14 @@ def health() -> dict:
     return {
         "ok": True,
         "service": "eventide",
-        "state_file": get_state_file_path(),
-        "dashboard_exists": DASHBOARD_FILE.exists(),
+        "state_file": (
+            get_state_file_path()
+        ),
+        "dashboard_exists": (
+            DASHBOARD_FILE.exists()
+        ),
         "emotion_integration": True,
+        "memory_integration": True,
         "time": utc_now().isoformat(),
     }
 
@@ -136,9 +169,11 @@ def get_state(
             "body": runtime.payload(
                 state
             ),
-            "state_card": runtime.render_card(
-                state,
-                now,
+            "state_card": (
+                runtime.render_card(
+                    state,
+                    now,
+                )
             ),
             "time": now.isoformat(),
         }
@@ -146,7 +181,9 @@ def get_state(
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"读取状态失败: {error}",
+            detail=(
+                f"读取状态失败: {error}"
+            ),
         ) from error
 
 
@@ -164,7 +201,31 @@ def get_emotion(
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"读取情绪状态失败: {error}",
+            detail=(
+                f"读取情绪状态失败: "
+                f"{error}"
+            ),
+        ) from error
+
+
+@app.get("/memory")
+def get_memory(
+    authorized: bool = Depends(
+        require_api_key
+    ),
+) -> dict:
+    del authorized
+
+    try:
+        return get_ombre_dashboard()
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                f"读取记忆状态失败: "
+                f"{error}"
+            ),
         ) from error
 
 
@@ -189,15 +250,19 @@ def tick_state(
         changed = runtime.tick(
             state,
             now,
-            last_counterpart_message_at=
+            last_counterpart_message_at=(
                 normalize_datetime(
-                    request.last_counterpart_message_at
-                ),
+                    request
+                    .last_counterpart_message_at
+                )
+            ),
         )
 
-        state_card = runtime.render_card(
-            state,
-            now,
+        state_card = (
+            runtime.render_card(
+                state,
+                now,
+            )
         )
 
         saved_state = save_state(
@@ -220,5 +285,7 @@ def tick_state(
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"推进状态失败: {error}",
+            detail=(
+                f"推进状态失败: {error}"
+            ),
         ) from error
