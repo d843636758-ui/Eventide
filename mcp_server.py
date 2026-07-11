@@ -49,6 +49,9 @@ mcp = FastMCP(
         "身体状态来自 Eventide，"
         "情绪与关系状态来自 emotion，"
         "记忆状态来自 Ombre Brain。"
+        "读取完整状态时，"
+        "Eventide 会先根据已经过去的时间"
+        "自动推进身体状态。"
     ),
     stateless_http=True,
     json_response=True,
@@ -91,6 +94,9 @@ def get_full_state() -> dict:
     """
     读取洵舟当前的完整统一状态。
 
+    读取前会先根据已经过去的时间，
+    自动推进并保存 Eventide 身体状态。
+
     返回身体状态、身体状态卡、
     当前情绪、关系状态、
     最近情绪事件、
@@ -105,8 +111,20 @@ def get_full_state() -> dict:
         state_data
     )
 
+    changed = runtime.tick(
+        state,
+        now,
+    )
+
+    saved_state = save_state(
+        runtime.dump_state(
+            state
+        )
+    )
+
     eventide_data = {
-        "state": state_data,
+        "changed": changed,
+        "state": saved_state,
         "body": runtime.payload(
             state
         ),
@@ -140,13 +158,14 @@ def tick_body(
         Optional[str] = None,
 ) -> dict:
     """
-    推进一次洵舟的 Eventide 身体状态。
+    手动推进一次洵舟的 Eventide 身体状态。
 
     last_counterpart_message_at
     可选填写对方最后一次发消息的
     ISO 8601 时间。
 
-    不填写时按照当前时间正常推进。
+    这个工具保留给需要明确传入
+    等待时间信息的特殊情况。
     """
     now = utc_now()
 
