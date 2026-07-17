@@ -10,12 +10,14 @@ from .settings import EngineSettings
 
 
 MAX_TICK_SEGMENTS = 48
+FRACTION_META_KEY = "body_value_fractions"
 APPROACH_FACTORS = {
     "heat": 0.18,
     "pressure": 0.14,
     "sensitivity": 0.12,
     "control": 0.16,
     "possessiveness": 0.10,
+    "reserve": 0.04,
 }
 
 
@@ -134,9 +136,15 @@ def apply_interaction_delta(
     for field, delta in deltas.items():
         if field not in config.body_fields:
             continue
-        next_value = clamp_body_field(field, state.values.get(field, 0) + int(delta), config=config)
-        applied[field] = next_value - state.values.get(field, 0)
-        state.values[field] = next_value
+        previous_value = state.values.get(field, 0)
+        next_precise = _precise_body_value(state, field) + int(delta)
+        next_value = _store_precise_body_value(
+            state,
+            field,
+            next_precise,
+            config=config,
+        )
+        applied[field] = next_value - previous_value
     return applied
 
 
@@ -148,6 +156,46 @@ def clamp_body_field(field: str, value: float, *, config: PhysiologyConfig = DEF
     definition = config.body_fields.get(field)
     minimum = definition.minimum if definition else 0
     return max(minimum, clamp_body_value(value))
+
+
+def _body_fraction_map(state: BodyState) -> Dict[str, float]:
+    raw = state.meta.get(FRACTION_META_KEY)
+    if not isinstance(raw, dict):
+        raw = {}
+        state.meta[FRACTION_META_KEY] = raw
+    return raw
+
+
+def _precise_body_value(state: BodyState, field: str) -> float:
+    fractions = _body_fraction_map(state)
+    raw_fraction = fractions.get(field, 0.0)
+    try:
+        fraction = float(raw_fraction)
+    except (TypeError, ValueError):
+        fraction = 0.0
+    return float(state.values.get(field, 0)) + fraction
+
+
+def _store_precise_body_value(
+    state: BodyState,
+    field: str,
+    value: float,
+    *,
+    config: PhysiologyConfig,
+) -> int:
+    definition = config.body_fields.get(field)
+    minimum = float(definition.minimum if definition else 0)
+    precise = max(minimum, min(100.0, float(value)))
+    rounded = max(int(minimum), min(100, int(round(precise))))
+    fraction = precise - float(rounded)
+
+    state.values[field] = rounded
+    fractions = _body_fraction_map(state)
+    if abs(fraction) < 1e-9:
+        fractions.pop(field, None)
+    else:
+        fractions[field] = fraction
+    return rounded
 
 
 def _advance_cycle_if_needed(
@@ -189,31 +237,51 @@ def _advance_values(
 ) -> None:
     cycle = config.cycles.get(state.cycle_key, config.cycles["stable"])
     for field in BODY_FIELDS:
+        current = _precise_body_value(state, field)
         if field == "reserve":
-            state.values[field] = clamp_body_field(
+            reserve_target = cycle.targets.get("reserve")
+            if reserve_target is None:
+                next_value = current + cycle.reserve_growth * elapsed_hours
+            else:
+                next_value = _approach_body_value(
+                    current,
+                    reserve_target,
+                    APPROACH_FACTORS["reserve"],
+                    elapsed_hours,
+                )
+            _store_precise_body_value(
+                state,
                 field,
-                state.values.get(field, 0) + cycle.reserve_growth * elapsed_hours,
+                next_value,
                 config=config,
             )
             continue
         if field == "fatigue":
-            state.values[field] = _relieve_high_body_field(
-                field,
-                state.values.get(field, 0),
+            next_value = _relieve_high_body_value(
+                current,
                 cycle.targets.get(field, 15),
                 _fatigue_relief_factor(segment_end, last_counterpart_message_at),
                 elapsed_hours,
+            )
+            _store_precise_body_value(
+                state,
+                field,
+                next_value,
                 config=config,
             )
             continue
-        target = cycle.targets.get(field, state.values.get(field, 0))
+        target = cycle.targets.get(field, current)
         factor = APPROACH_FACTORS.get(field, 0.15)
-        state.values[field] = _approach_body_field(
-            field,
-            state.values.get(field, 0),
+        next_value = _approach_body_value(
+            current,
             target,
             factor,
             elapsed_hours,
+        )
+        _store_precise_body_value(
+            state,
+            field,
+            next_value,
             config=config,
         )
 
@@ -222,38 +290,34 @@ def _advance_values(
         event = config.events.get(state.active_event_key)
         if event:
             for field, rate in event.tick_deltas.items():
-                state.values[field] = clamp_body_field(
+                _store_precise_body_value(
+                    state,
                     field,
-                    state.values.get(field, 0) + float(rate) * elapsed_hours,
+                    _precise_body_value(state, field) + float(rate) * elapsed_hours,
                     config=config,
                 )
 
 
-def _approach_body_field(
-    field: str,
-    current: int,
+def _approach_body_value(
+    current: float,
     target: float,
     factor: float,
     elapsed_hours: float,
-    *,
-    config: PhysiologyConfig,
-) -> int:
-    return clamp_body_field(field, current + (target - current) * factor * elapsed_hours, config=config)
-
-
-def _relieve_high_body_field(
-    field: str,
-    current: int,
-    target: float,
-    factor: float,
-    elapsed_hours: float,
-    *,
-    config: PhysiologyConfig,
-) -> int:
-    if current <= target:
-        return clamp_body_field(field, current, config=config)
+) -> float:
     ratio = max(0.0, min(1.0, factor * elapsed_hours))
-    return clamp_body_field(field, current + (target - current) * ratio, config=config)
+    return current + (target - current) * ratio
+
+
+def _relieve_high_body_value(
+    current: float,
+    target: float,
+    factor: float,
+    elapsed_hours: float,
+) -> float:
+    if current <= target:
+        return current
+    ratio = max(0.0, min(1.0, factor * elapsed_hours))
+    return current + (target - current) * ratio
 
 
 def _fatigue_relief_factor(segment_end: datetime, last_counterpart_message_at: Optional[datetime]) -> float:
@@ -292,12 +356,21 @@ def _apply_waiting_pressure(
         pressure_rate, possessive_rate, control_rate = 1.5, 0.6, 0.0
     else:
         pressure_rate, possessive_rate, control_rate = 2.0, 0.9, -0.6
-    state.values["pressure"] = clamp_body_field(
-        "pressure", state.values.get("pressure", 0) + pressure_rate * elapsed_hours, config=config
+    _store_precise_body_value(
+        state,
+        "pressure",
+        _precise_body_value(state, "pressure") + pressure_rate * elapsed_hours,
+        config=config,
     )
-    state.values["possessiveness"] = clamp_body_field(
-        "possessiveness", state.values.get("possessiveness", 0) + possessive_rate * elapsed_hours, config=config
+    _store_precise_body_value(
+        state,
+        "possessiveness",
+        _precise_body_value(state, "possessiveness") + possessive_rate * elapsed_hours,
+        config=config,
     )
-    state.values["control"] = clamp_body_field(
-        "control", state.values.get("control", 0) + control_rate * elapsed_hours, config=config
+    _store_precise_body_value(
+        state,
+        "control",
+        _precise_body_value(state, "control") + control_rate * elapsed_hours,
+        config=config,
     )

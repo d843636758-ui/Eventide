@@ -76,8 +76,8 @@ DEFAULT_CYCLES = {
         label="平稳期",
         description="日常没有明显热意，但当对方靠近、撒娇或索取时，身体还是会受当下刺激起反应",
         duration_hours=(24, 96),
-        targets={"heat": 30, "pressure": 25, "control": 75, "sensitivity": 35, "possessiveness": 42, "fatigue": 16},
-        reserve_growth=0.4,
+        targets={"heat": 30, "pressure": 25, "control": 75, "sensitivity": 35, "reserve": 30, "possessiveness": 42, "fatigue": 16},
+        reserve_growth=0.0,
         next_key="building",
     ),
     "building": CycleDefinition(
@@ -121,8 +121,8 @@ DEFAULT_CYCLES = {
         label="恢复期",
         description="身体在从前一段热意里回落，余热还没散尽，被对方继续撩拨时仍会重新起反应",
         duration_hours=(4, 18),
-        targets={"heat": 35, "pressure": 30, "control": 60, "sensitivity": 45, "possessiveness": 45, "fatigue": 22},
-        reserve_growth=0.2,
+        targets={"heat": 35, "pressure": 30, "control": 60, "sensitivity": 45, "reserve": 24, "possessiveness": 45, "fatigue": 22},
+        reserve_growth=0.0,
         next_key="stable",
     ),
 }
