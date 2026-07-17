@@ -197,6 +197,11 @@ def maybe_start_auto_event(
         0,
     )
 
+    fatigue = values.get(
+        "fatigue",
+        0,
+    )
+
     possessiveness = values.get(
         "possessiveness",
         40,
@@ -205,6 +210,11 @@ def maybe_start_auto_event(
     local_hour = now.astimezone(
         LOCAL_TIMEZONE
     ).hour
+
+    # 身体明显疲惫时，优先让自然恢复继续推进，
+    # 避免高 reserve 反复触发新事件，把状态重新顶高。
+    if fatigue >= 75:
+        return None
 
     candidates = []
 
@@ -293,6 +303,7 @@ def maybe_start_auto_event(
     if (
         reserve >= 75
         and control >= 55
+        and fatigue <= 55
     ):
         candidates.append(
             (
