@@ -3,7 +3,7 @@ from unittest.mock import patch
 import integrations
 
 
-def test_get_ombre_dream_reads_latest_cache():
+def test_get_ombre_dream_reads_automatic_candidate_feed():
     with (
         patch.object(integrations, "OB_HOOK_TOKEN", "secret"),
         patch.object(
@@ -16,7 +16,7 @@ def test_get_ombre_dream_reads_latest_cache():
 
     assert result == {"ok": True, "text": "最近一次梦境"}
     fetch.assert_called_once_with(
-        f"{integrations.OB_BASE_URL}/dream-latest",
+        f"{integrations.OB_BASE_URL}/dream-hook",
         headers={"X-Ombre-Hook-Token": "secret"},
     )
 
@@ -43,7 +43,7 @@ def test_ombre_dashboard_distinguishes_empty_cache_from_connection_error():
     assert result["errors"] == []
 
 
-def test_ombre_dashboard_reports_dream_latest_error():
+def test_ombre_dashboard_reports_dream_hook_error():
     with (
         patch.object(
             integrations,

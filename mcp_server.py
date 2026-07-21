@@ -358,7 +358,7 @@ def get_full_state() -> dict:
     当前情绪、关系状态、
     最近情绪事件、
     Ombre Brain 当前浮现的记忆
-    与最近一次主动梦境整理内容。
+    与当前梦境整理候选内容。
     """
     now = utc_now()
 
