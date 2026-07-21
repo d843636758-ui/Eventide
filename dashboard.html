@@ -1124,7 +1124,7 @@
               </div>
 
               <div class="status-sub">
-                dream-hook
+                dream-latest
               </div>
             </div>
           </div>
@@ -1819,31 +1819,33 @@
       ).textContent =
         dream.trim()
           ? dream
-          : "当前没有梦境整理内容。";
+          : data?.dream_connected
+            ? "尚无主动梦境整理。调用 OB 的 dream 工具后，这里会显示最近一次结果。"
+            : "梦境通道暂时无法读取。";
 
       const memoryConnected =
-        Boolean(
-          memory.trim()
-        );
+        data?.memory_connected === true;
 
       const dreamConnected =
-        Boolean(
-          dream.trim()
-        );
+        data?.dream_connected === true;
 
       document.getElementById(
         "memoryConnection"
       ).textContent =
         memoryConnected
-          ? "已连接"
-          : "暂无内容";
+          ? memory.trim()
+            ? "已连接"
+            : "已连接 · 尚无内容"
+          : "异常";
 
       document.getElementById(
         "dreamConnection"
       ).textContent =
         dreamConnected
-          ? "已连接"
-          : "暂无内容";
+          ? dream.trim()
+            ? "已连接"
+            : "已连接 · 尚无内容"
+          : "异常";
 
       document.getElementById(
         "overviewMemory"

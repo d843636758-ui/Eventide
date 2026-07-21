@@ -192,7 +192,7 @@ def get_ombre_dream() -> dict:
         }
 
     return fetch_text(
-        f"{OB_BASE_URL}/dream-hook",
+        f"{OB_BASE_URL}/dream-latest",
         headers={
             "X-Ombre-Hook-Token":
                 OB_HOOK_TOKEN,
@@ -218,7 +218,7 @@ def get_ombre_dashboard() -> dict:
         errors.append(
             dream.get(
                 "error",
-                "dream-hook 读取失败",
+                "dream-latest 读取失败",
             )
         )
 
@@ -234,6 +234,14 @@ def get_ombre_dashboard() -> dict:
         "dream": dream.get(
             "text",
             "",
+        ),
+        "memory_connected": breath.get(
+            "ok",
+            False,
+        ),
+        "dream_connected": dream.get(
+            "ok",
+            False,
         ),
         "errors": errors,
     }
