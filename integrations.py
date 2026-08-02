@@ -94,6 +94,7 @@ def fetch_text(
         return {
             "ok": False,
             "text": "",
+            "status_code": error.code,
             "error": f"HTTP {error.code}",
         }
 
@@ -191,7 +192,7 @@ def get_ombre_dream() -> dict:
             "error": "OB_HOOK_TOKEN 尚未配置",
         }
 
-    return fetch_text(
+    result = fetch_text(
         f"{OB_BASE_URL}/dream-hook",
         headers={
             "X-Ombre-Hook-Token":
@@ -199,10 +200,48 @@ def get_ombre_dream() -> dict:
         },
     )
 
+    if result.get("ok"):
+        return {
+            **result,
+            "mode": "legacy_hook",
+            "endpoint": "dream-hook",
+        }
+
+    if result.get("status_code") in {
+        404,
+        410,
+    }:
+        return {
+            "ok": True,
+            "text": "",
+            "mode": "on_demand_mcp",
+            "endpoint": "OB dream tool",
+            "message": (
+                "新版 OB 已改为按需梦境整理；"
+                "需要时由我调用 dream 工具，"
+                "不再由 Eventide 自动读取。"
+            ),
+        }
+
+    return {
+        **result,
+        "mode": "unavailable",
+        "endpoint": "dream-hook",
+    }
+
 
 def get_ombre_dashboard() -> dict:
     breath = get_ombre_breath()
     dream = get_ombre_dream()
+
+    dream_mode = dream.get("mode")
+
+    if not dream_mode:
+        dream_mode = (
+            "legacy_hook"
+            if dream.get("ok")
+            else "unavailable"
+        )
 
     errors = []
 
@@ -242,6 +281,15 @@ def get_ombre_dashboard() -> dict:
         "dream_connected": dream.get(
             "ok",
             False,
+        ),
+        "dream_mode": dream_mode,
+        "dream_endpoint": dream.get(
+            "endpoint",
+            "dream-hook",
+        ),
+        "dream_message": dream.get(
+            "message",
+            "",
         ),
         "errors": errors,
     }

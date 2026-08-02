@@ -1123,7 +1123,10 @@
                 —
               </div>
 
-              <div class="status-sub">
+              <div
+                class="status-sub"
+                id="dreamConnectionSource"
+              >
                 dream-hook
               </div>
             </div>
@@ -1807,6 +1810,12 @@
       const dream =
         data?.dream || "";
 
+      const dreamMode =
+        data?.dream_mode ||
+        (data?.dream_connected
+          ? "legacy_hook"
+          : "unavailable");
+
       document.getElementById(
         "memoryText"
       ).textContent =
@@ -1819,7 +1828,11 @@
       ).textContent =
         dream.trim()
           ? dream
-          : data?.dream_connected
+          : dreamMode ===
+              "on_demand_mcp"
+            ? data?.dream_message ||
+              "新版 OB 已改为按需梦境整理；需要时由我调用 dream 工具。"
+            : data?.dream_connected
             ? "当前没有可供梦境整理的新记忆。"
             : "梦境通道暂时无法读取。";
 
@@ -1841,11 +1854,23 @@
       document.getElementById(
         "dreamConnection"
       ).textContent =
-        dreamConnected
+        dreamMode ===
+          "on_demand_mcp"
+          ? "按需"
+          : dreamConnected
           ? dream.trim()
             ? "已连接"
             : "已连接 · 尚无内容"
           : "异常";
+
+      document.getElementById(
+        "dreamConnectionSource"
+      ).textContent =
+        data?.dream_endpoint ||
+        (dreamMode ===
+          "on_demand_mcp"
+          ? "OB dream tool"
+          : "dream-hook");
 
       document.getElementById(
         "overviewMemory"
