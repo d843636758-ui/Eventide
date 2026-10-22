@@ -2,6 +2,28 @@
 
 给你的 AI 一个涨落。
 
+## 私有部署
+
+仓库根目录的 `Dockerfile` 可直接用于生产部署。请挂载持久卷到
+`/data`；运行状态保存在 `/data/eventide_state.json`，迁移时只需复制
+这一个文件，原服务可以保留到新服务验收完成后再停止。
+
+生产环境变量：
+
+| 变量 | 用途 |
+|---|---|
+| `EVENTIDE_API_KEY` | `/state`、`/emotion`、`/memory`、`/tick` 的访问密钥 |
+| `EVENTIDE_MCP_PATH_TOKEN` | MCP 私密路径令牌；入口为 `/mcp/<token>` |
+| `EVENTIDE_PUBLIC_HOST` | MCP 允许的公网主机名，默认 `eventide.xunzhou.space` |
+| `EMOTION_BASE_URL` | Emotion 服务地址，默认 `https://emotion.xunzhou.space` |
+| `OB_BASE_URL` | Ombre Brain 地址，默认 `https://ombre.xunzhou.space` |
+| `OB_HOOK_TOKEN` | Ombre Brain hook 的请求令牌 |
+| `DATA_DIR` | 状态目录，默认 `/data` |
+| `PORT` | HTTP 端口，默认 `8080` |
+
+切换前建议先调用带 `X-API-Key` 的只读 `/state` 导出旧状态，然后在新
+容器启动前将返回值中的 `state` 保存为 `/data/eventide_state.json`。
+
 Eventide 是一个给 AI 伴侣接入生理状态的源码公开项目。它参考 ABO 世界观下的身体周期，用时间、互动、等待、梦境和结算结果推进身体状态，并生成可插入模型上下文的隐藏状态提示词。
 
 源码公开，允许非商业使用。作者：Chuli（@chuli1122）。

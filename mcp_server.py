@@ -29,7 +29,7 @@ runtime = EventideRuntime()
 
 PUBLIC_HOST = os.getenv(
     "EVENTIDE_PUBLIC_HOST",
-    "eventidemcp.zeabur.app",
+    "eventide.xunzhou.space",
 ).strip()
 
 

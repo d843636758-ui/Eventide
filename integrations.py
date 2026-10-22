@@ -6,12 +6,12 @@ from urllib.request import Request, urlopen
 
 EMOTION_BASE_URL = os.getenv(
     "EMOTION_BASE_URL",
-    "https://emotionmcp.zeabur.app",
+    "https://emotion.xunzhou.space",
 ).rstrip("/")
 
 OB_BASE_URL = os.getenv(
     "OB_BASE_URL",
-    "https://webweb.zeabur.app",
+    "https://ombre.xunzhou.space",
 ).rstrip("/")
 
 OB_HOOK_TOKEN = os.getenv(
