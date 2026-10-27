@@ -11,6 +11,7 @@ COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir . \
     && mkdir -p /data
 
 EXPOSE 8080
