@@ -35,8 +35,19 @@ else
     echo "$APP_DIR exists and is not an Eventide git checkout; refusing to overwrite it." >&2
     exit 1
   fi
-  rm -d "$APP_DIR" 2>/dev/null || true
+  rmdir "$APP_DIR" 2>/dev/null || true
   git clone --depth 1 "$REPOSITORY" "$APP_DIR"
+fi
+
+if [ ! -f "$DATA_DIR/eventide_state.json" ] && [ "${ALLOW_EMPTY_EVENTIDE_DATA:-0}" != "1" ]; then
+  cat >&2 <<EOF
+No migrated Eventide state was found at:
+  $DATA_DIR/eventide_state.json
+
+Copy the Zeabur state file here before deploying. To intentionally create a
+fresh state, rerun with ALLOW_EMPTY_EVENTIDE_DATA=1.
+EOF
+  exit 1
 fi
 
 ENV_FILE="$SERVICE_DIR/.env"
@@ -48,13 +59,15 @@ if [ ! -f "$ENV_FILE" ]; then
 EVENTIDE_API_KEY=$API_KEY
 EVENTIDE_MCP_PATH_TOKEN=$MCP_PATH_TOKEN
 EVENTIDE_PUBLIC_HOST=$DOMAIN
-EMOTION_BASE_URL=https://emotion.xunzhou.space
-OB_BASE_URL=https://ombre.xunzhou.space
+EVENTIDE_LEGACY_PUBLIC_HOST=eventidemcp.zeabur.app
+EMOTION_BASE_URL=http://emotion:3000
+OB_BASE_URL=http://ombre-brain:8000
 OB_HOOK_TOKEN=
 DATA_DIR=/data
 PORT=8080
 EOF
 fi
+chmod 600 "$ENV_FILE"
 
 cat >"$SERVICE_DIR/compose.yaml" <<EOF
 services:
@@ -96,19 +109,38 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 
-path = Path('/opt/mcp-stack/proxy/Caddyfile')
-text = path.read_text()
-domain = 'eventide.xunzhou.space'
-block = '''eventide.xunzhou.space {
+path = Path("/opt/mcp-stack/proxy/Caddyfile")
+text = path.read_text(encoding="utf-8")
+block = """eventide.xunzhou.space {
     reverse_proxy eventide:8080
-}'''
+}"""
 
-pattern = re.compile(r'(?ms)^eventide\.xunzhou\.space\s*\{.*?^\}')
-if pattern.search(text):
-    text = pattern.sub(block, text, count=1)
-else:
-    text = text.rstrip() + '\n\n' + block + '\n'
-path.write_text(text)
+managed = re.compile(
+    r"(?ms)^# BEGIN EVENTIDE\n.*?^# END EVENTIDE\n?"
+)
+text = managed.sub("", text)
+
+lines = text.splitlines()
+kept = []
+index = 0
+start = re.compile(r"^eventide\.xunzhou\.space\s*\{")
+while index < len(lines):
+    if not start.match(lines[index]):
+        kept.append(lines[index])
+        index += 1
+        continue
+
+    depth = 0
+    while index < len(lines):
+        depth += lines[index].count("{")
+        depth -= lines[index].count("}")
+        index += 1
+        if depth == 0:
+            break
+
+text = "\n".join(kept).rstrip()
+text += "\n\n# BEGIN EVENTIDE\n" + block + "\n# END EVENTIDE\n"
+path.write_text(text, encoding="utf-8")
 PY
 
 cd "$SERVICE_DIR"
@@ -133,9 +165,16 @@ for _ in $(seq 1 20); do
   sleep 2
 done
 
-docker compose ps
+if ! docker inspect -f '{{.State.Health.Status}}' eventide 2>/dev/null | grep -qx healthy; then
+  docker compose ps >&2
+  docker logs --tail 100 eventide >&2 || true
+  exit 1
+fi
+
 curl -fsS --max-time 15 "https://$DOMAIN/health"
 printf '\nEVENTIDE_DEPLOYED\n'
+MCP_PATH_TOKEN=$(sed -n 's/^EVENTIDE_MCP_PATH_TOKEN=//p' "$ENV_FILE")
+printf 'MCP URL: https://%s/%s/mcp\n' "$DOMAIN" "$MCP_PATH_TOKEN"
 printf 'State file: %s/eventide_state.json\n' "$DATA_DIR"
 printf 'Environment: %s\n' "$ENV_FILE"
 printf 'Caddy backup: %s\n' "$CADDY_BACKUP"
