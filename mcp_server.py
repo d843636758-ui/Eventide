@@ -33,6 +33,24 @@ PUBLIC_HOST = os.getenv(
 ).strip()
 
 
+LEGACY_PUBLIC_HOST = os.getenv(
+    "EVENTIDE_LEGACY_PUBLIC_HOST",
+    "eventidemcp.zeabur.app",
+).strip()
+
+
+PUBLIC_HOSTS = list(
+    dict.fromkeys(
+        host
+        for host in (
+            PUBLIC_HOST,
+            LEGACY_PUBLIC_HOST,
+        )
+        if host
+    )
+)
+
+
 LOCAL_TIMEZONE = ZoneInfo(
     "Asia/Shanghai"
 )
@@ -41,14 +59,21 @@ LOCAL_TIMEZONE = ZoneInfo(
 transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
-        PUBLIC_HOST,
-        f"{PUBLIC_HOST}:*",
+        value
+        for host in PUBLIC_HOSTS
+        for value in (
+            host,
+            f"{host}:*",
+        )
     ],
     allowed_origins=[
         "https://chatgpt.com",
         "https://www.chatgpt.com",
         "https://chat.openai.com",
-        f"https://{PUBLIC_HOST}",
+        *(
+            f"https://{host}"
+            for host in PUBLIC_HOSTS
+        ),
     ],
 )
 
